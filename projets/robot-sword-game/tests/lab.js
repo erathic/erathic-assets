@@ -41,6 +41,12 @@ const { chromium } = require('playwright'); const path = require('path'); const 
   ok('GLB déposé', await L(() => __lab.obj.name === 'Character-bot.glb' && __lab.obj.clips.length === 22 && __lab.obj.root.getObjectByProperty('isMesh', true).material.type !== 'MeshNormalMaterial'));
   ok('fichier : matériaux d\'origine par défaut', (await p.inputValue('#matMode')) === 'original');
   await p.setInputFiles('#file', path.join(root, 'personnages/zombie_quaternius_v1/Zombie.fbx')); await p.waitForFunction('__lab.obj.name==="Zombie.fbx"', { timeout: 30000 }); ok('FBX déposé', await L(() => __lab.obj.clips.length >= 3));
+  // dérivé compressé en Meshopt par l'atelier local (si l'outil est installé) : doit se charger dans l'atelier avec le même nombre de triangles
+  const tool = path.join(root, 'outils/atelier-mcp'); if (fs.existsSync(path.join(tool, 'node_modules'))) {
+    const { execFileSync } = require('child_process'); const tmpRoot = fs.mkdtempSync('/tmp/atelier-lab-'); fs.mkdirSync(path.join(tmpRoot, 'p'), { recursive: true }); fs.copyFileSync(path.join(root, 'personnages/bot_v1/Character-bot.glb'), path.join(tmpRoot, 'p/bot.glb'));
+    execFileSync('node', ['--no-warnings', path.join(tool, 'src/cli.js'), 'derive', 'p/bot.glb', '--nom', 'bot_meshopt', '--compresser', 'meshopt'], { env: { ...process.env, ATELIER_ROOTS: tmpRoot } });
+    await p.setInputFiles('#file', path.join(tmpRoot, 'derives/bot_meshopt_v1/bot_meshopt_v1.glb')); await p.waitForFunction('__lab.obj.name==="bot_meshopt_v1.glb"', { timeout: 30000 });
+    ok('dérivé Meshopt chargé', await L(() => __lab.obj.clips.length === 22 && __lab.inspect(__lab.obj.root).tris === 7520)); fs.rmSync(tmpRoot, { recursive: true, force: true }); }
   fs.writeFileSync('/tmp/mauvais.txt', 'x'); await p.setInputFiles('#file', '/tmp/mauvais.txt'); await p.waitForTimeout(300); ok('format refusé', (await p.textContent('#msg')).includes('Format'));
   // captures
   ok('capture de la vue', await L(() => __lab.viewer.capture().length > 2000));

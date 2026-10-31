@@ -1,0 +1,28 @@
+{
+  "name": "erathic-atelier-mcp",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Atelier Erathic en local : inspecter, alléger et dériver des modèles GLB (outils en ligne de commande et serveur MCP)",
+  "bin": {
+    "atelier": "src/cli.js",
+    "atelier-mcp": "src/mcp.js"
+  },
+  "scripts": {
+    "test": "node tests/core.test.js && node tests/mcp.test.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@gltf-transform/core": "^4.5.1",
+    "@gltf-transform/extensions": "^4.5.1",
+    "@gltf-transform/functions": "^4.5.1",
+    "@modelcontextprotocol/sdk": "^1.32.2",
+    "draco3dgltf": "^1.5.9",
+    "gltf-validator": "^2.0.0-dev.3.10",
+    "meshoptimizer": "^1.3.0",
+    "sharp": "^0.35.5",
+    "zod": "^4.6.7"
+  }
+}

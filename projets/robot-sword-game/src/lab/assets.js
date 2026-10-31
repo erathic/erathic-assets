@@ -2,6 +2,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
+import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';   // lit les dérivés compressés par l'atelier local (EXT_meshopt_compression)
 import { clone as skClone } from 'three/examples/jsm/utils/SkeletonUtils.js';
 import { styleRobot, clipFromJson } from '../player.js';
 import { loadZombieSource } from '../zombies.js';
@@ -70,7 +71,7 @@ export function makeDemoSword() {
 // ---------- fichier déposé (GLB ou FBX) ----------
 export async function loadFile(file) {
   const ext = file.name.split('.').pop().toLowerCase(), buf = await file.arrayBuffer(); let root, anims = [];
-  if (ext === 'glb' || ext === 'gltf') { const gltf = await new Promise((res, rej) => new GLTFLoader().parse(buf, '', res, rej)); root = gltf.scene; anims = gltf.animations; }
+  if (ext === 'glb' || ext === 'gltf') { const gltf = await new Promise((res, rej) => new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).parse(buf, '', res, rej)); root = gltf.scene; anims = gltf.animations; }
   else if (ext === 'fbx') { root = new FBXLoader().parse(buf, ''); anims = root.animations || []; }
   else throw new Error('Format non pris en charge : .' + ext + ' (GLB, GLTF ou FBX)');
   root.traverse(o => { if (o.isMesh) o.userData.orig = o.material; });

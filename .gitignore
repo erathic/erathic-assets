@@ -10,3 +10,4 @@ projets/robot-sword-game/jumps.json
 package-lock.json
 index.dev.html
 index.lab.html
+!outils/atelier-mcp/package-lock.json
