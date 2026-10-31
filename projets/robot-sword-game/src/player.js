@@ -16,7 +16,7 @@ const ROBOT_MATS = {
   Blade: () => limeMat(BASEY), Blade_Edge: () => limeMat(BASEY, { low:0.7, high:1.3, power:0.8 }),
   Main: () => greyMat(BASEY), Material: () => greyMat(BASEY, C.gris, '#FFFFFF'), Black: () => darkMat(BASEY),
 };
-function styleRobot(model) {
+export function styleRobot(model) {
   const cache = {}; const mk = n => (cache[n] = cache[n] || bounds((ROBOT_MATS[n] || ROBOT_MATS.Main)(), 0, 2.5));
   model.traverse(o => {
     if (!o.isMesh) return;
@@ -28,7 +28,7 @@ function styleRobot(model) {
 }
 
 // clip depuis le format JSON compact { dur, tracks:[{ n, t, v }] }
-function clipFromJson(name, j) {
+export function clipFromJson(name, j) {
   const tr = j.tracks.map(t => t.n.endsWith('.quaternion') ? new THREE.QuaternionKeyframeTrack(t.n, t.t, t.v) : new THREE.VectorKeyframeTrack(t.n, t.t, t.v));
   return new THREE.AnimationClip(name, j.dur, tr);
 }

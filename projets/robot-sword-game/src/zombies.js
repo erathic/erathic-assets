@@ -10,7 +10,7 @@ import { createShadows } from './shadows.js';
 import ZOM_B64 from '../zombie.b64.txt';
 
 // modèle source : un maillage par membre, mis à l'échelle (1,9 unité), pieds au sol, centré sur les hanches
-function loadSource() {
+export function loadZombieSource() {
   const o = new FBXLoader().parse(b64ToBuffer(ZOM_B64), '');
   o.traverse(n => { if (n.isMesh) { n.frustumCulled = false; n.material = zMat;
     n.geometry.setAttribute('aDiag', new THREE.BufferAttribute(new Float32Array(n.geometry.attributes.position.count), 1)); } });
@@ -26,7 +26,7 @@ function loadSource() {
 
 export function createZombies(ctx) {
   const { S, pl, perf } = ctx, { scene } = ctx.stage, { blobTex } = ctx.world;
-  const src = loadSource();
+  const src = loadZombieSource();
   const list = [];
   const shadows = createShadows(scene, blobTex);
 

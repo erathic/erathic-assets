@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Erathic - Atelier</title>
+<style>
+*{box-sizing:border-box;border-radius:0}
+html,body{margin:0;height:100%;background:#1E1F22;color:#D9D9D9;font:12px/1.45 Montserrat,system-ui,-apple-system,"Segoe UI",sans-serif;overflow:hidden}
+#app{display:flex;height:100%}
+#panel{width:350px;min-width:350px;overflow-y:auto;border-right:1px solid #2F2F33;padding:0 0 40px}
+#view{position:relative;flex:1;min-width:0}
+#view canvas{display:block;width:100%;height:100%}
+#hud{position:absolute;top:10px;right:12px;text-align:right;color:#DBFF00;font-weight:700;letter-spacing:.06em;pointer-events:none;white-space:pre}
+#drop{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(30,31,34,.88);color:#DBFF00;font-weight:800;letter-spacing:.12em;font-size:16px;border:2px dashed #DBFF00;pointer-events:none}
+header{padding:14px 16px 10px;border-bottom:1px solid #2F2F33}
+header b{color:#DBFF00;letter-spacing:.14em;font-size:13px}
+header span{display:block;color:#8d8e96;margin-top:2px}
+section{padding:10px 16px 12px;border-bottom:1px solid #2F2F33}
+h2{margin:0 0 8px;font-size:11px;letter-spacing:.14em;color:#DBFF00;text-transform:uppercase}
+.row{display:flex;gap:6px;align-items:center;margin:5px 0;flex-wrap:wrap}
+.row label{color:#8d8e96;min-width:64px}
+button,select,input,textarea{font:inherit;color:#D9D9D9}
+button{background:none;border:1px solid #DBFF00;color:#DBFF00;padding:4px 9px;cursor:pointer}
+button:hover{background:#2F2F33}
+button.on{background:#DBFF00;color:#1E1F22}
+select,input[type=number],textarea{background:#2F2F33;border:1px solid #3a3b40;padding:3px 5px}
+select{max-width:100%}
+input[type=range]{flex:1;min-width:90px;accent-color:#DBFF00}
+input[type=number]{width:62px}
+textarea{width:100%;height:92px;resize:vertical;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px}
+#clips{max-height:230px;overflow-y:auto;border:1px solid #2F2F33}
+#clips .g{padding:4px 8px;background:#2F2F33;color:#DBFF00;font-weight:700;letter-spacing:.06em}
+#clips .c{padding:3px 8px;cursor:pointer;display:flex;justify-content:space-between;gap:8px}
+#clips .c:hover{background:#2a2b2f}#clips .c.on{background:#DBFF00;color:#1E1F22;font-weight:700}
+#clips .c i{font-style:normal;opacity:.6}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:2px 10px}.kv b{color:#8d8e96;font-weight:600}
+.note{color:#8d8e96}
+.res{margin-top:6px;color:#DBFF00}
+.hide{display:none}
+#shot{position:fixed;inset:0;z-index:9;display:none;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:rgba(30,31,34,.96);padding:20px}
+#shot img{max-width:92vw;max-height:80vh;border:1px solid #2F2F33}
+#drop2{border:1px dashed #5a5b63;padding:12px;text-align:center;color:#8d8e96;cursor:pointer}
+#drop2:hover{border-color:#DBFF00;color:#DBFF00}
+</style></head><body>
+<div id="app">
+ <div id="panel">
+  <header><b>ATELIER ERATHIC</b><span>visionneuse d'assets : modèle, animations, tenue d'arme</span></header>
+
+  <section><h2>Objet</h2>
+   <div class="row" id="objBtns"></div>
+   <div id="drop2">Déposer un fichier GLB, GLTF ou FBX ici (ou cliquer)<input id="file" type="file" accept=".glb,.gltf,.fbx" class="hide"></div>
+   <div class="kv" id="info" style="margin-top:8px"></div>
+   <div class="note" id="msg"></div>
+  </section>
+
+  <section><h2>Affichage</h2>
+   <div class="row"><label>Matériaux</label><select id="matMode"></select></div>
+   <div class="row"><label>Repères</label><button id="bWire">filaire</button><button id="bSkel">squelette</button><button id="bBox">boîte</button><button id="bGrid" class="on">grille</button><button id="bSpin">plateau</button></div>
+   <div class="row"><label>Vues</label><button data-v="face">face</button><button data-v="profil">profil</button><button data-v="trois_quarts">3/4</button><button data-v="dos">dos</button><button id="bFrame">cadrer</button></div>
+  </section>
+
+  <section id="secAnim"><h2>Animations</h2>
+   <div id="clips"></div>
+   <div class="row"><button id="bPlay">pause</button><button id="bLoop" class="on">boucle</button><label style="min-width:0">vitesse</label><input id="speed" type="range" min="0.1" max="2" step="0.05" value="1"><span id="speedV">1</span></div>
+   <div class="row"><label>temps</label><input id="tline" type="range" min="0" max="1" step="0.001" value="0"><span id="tval">0.00 / 0.00 s</span></div>
+  </section>
+
+  <section id="secTrans"><h2>Transition entre deux clips</h2>
+   <div class="row"><label>de A</label><select id="tA"></select></div>
+   <div class="row"><label>à B</label><select id="tB"></select></div>
+   <div class="row"><label>A à (s)</label><input id="tAt" type="number" step="0.05" value="0"><label style="min-width:0">tenir (s)</label><input id="tHold" type="number" step="0.1" value="0.4"></div>
+   <div class="row"><label>fondu (s)</label><input id="tFade" type="number" step="0.01" value="0.2"><button id="bSync">synchroniser</button><button id="bGap">mesurer</button><button id="bTrans">jouer A vers B</button></div>
+   <div class="res" id="gapRes"></div>
+  </section>
+
+  <section id="secWeapon"><h2>Tenue d'arme</h2>
+   <div class="row"><label>Arme</label><select id="wSrc"><option value="demo">Épée de démonstration</option><option value="file">Fichier d'arme chargé</option></select><button id="bWFile">choisir un fichier</button><input id="wFile" type="file" accept=".glb,.gltf,.fbx" class="hide"></div><div class="note" id="wFileName"></div>
+   <div class="row"><label>Os</label><select id="wBone"></select></div>
+   <div class="row"><button id="bWAttach">accrocher</button><button id="bWDetach">retirer</button><button id="bWAxes" class="on">repère</button><button id="bHideSword">masquer l'épée du robot</button></div>
+   <div id="wCtl"></div>
+   <textarea id="wJson" readonly placeholder="Réglages en JSON, à copier dans la recette de variante"></textarea>
+   <div class="row"><button id="bWCopy">copier</button><button id="bWSave">enregistrer</button></div>
+  </section>
+
+  <section id="secGore"><h2>Démembrement (zombie)</h2>
+   <div class="row" id="goreBtns"></div>
+  </section>
+
+  <section><h2>Captures</h2>
+   <div class="row"><button id="bShot">image de la vue</button><button id="bSheet">planche 4 vues</button></div>
+   <div class="note">L'image s'affiche dans la page. La planche répond à l'étape « test » de la procédure d'ingestion.</div>
+  </section>
+ </div>
+ <div id="view"><div id="hud"></div><div id="drop">DÉPOSER LE FICHIER</div></div>
+ <div id="shot"></div>
+</div>
+<script>/*BUNDLE*/</script></body></html>

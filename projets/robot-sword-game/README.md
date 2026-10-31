@@ -7,7 +7,7 @@ npm install                                   # à la racine du dépôt
 bash projets/robot-sword-game/prepare.sh      # produit projets/robot-sword-game/index.html
 ```
 
-Tests automatisés (Playwright, dossier `tests/`, à lancer depuis ce dossier après le build) : `node tests/trace.js` (non-régression déterministe : aléatoire figé, scénario scripté, trace de l'état ; comparer deux builds avec `diff`), `node tests/zt2.js` (parcours jusqu'à la victoire), `node tests/zt3.js` (défaite et rejouer), `node tests/ui.js` (joystick, boutons, clavier), `node tests/ct3.js` (durée des 4 coups du combo), `node tests/transitions.js` (table de transitions : fondus, synchronisation walk/run, vitesses rétablies), `node tests/lost.js` (perte et restauration du contexte WebGL), `node tests/bench.js index.html 4,25,50,100` (banc d'essai de performance, voir plus bas).
+Tests automatisés (Playwright, dossier `tests/`, à lancer depuis ce dossier après le build) : `node tests/trace.js` (non-régression déterministe : aléatoire figé, scénario scripté, trace de l'état ; comparer deux builds avec `diff`), `node tests/zt2.js` (parcours jusqu'à la victoire), `node tests/zt3.js` (défaite et rejouer), `node tests/ui.js` (joystick, boutons, clavier), `node tests/ct3.js` (durée des 4 coups du combo), `node tests/transitions.js` (table de transitions : fondus, synchronisation walk/run, vitesses rétablies), `node tests/lost.js` (perte et restauration du contexte WebGL), `node tests/bench.js index.html 4,25,50,100` (banc d'essai de performance, voir plus bas), `node tests/lab.js index.lab.html` (atelier, voir plus bas).
 
 ## Modules (`src/`)
 
@@ -45,3 +45,17 @@ Banc d'essai : `node tests/bench.js index.html 4,25,50,100` relève, pour N zomb
 Tests déterministes : le jeu a son propre générateur aléatoire (`util.js`, `seed(n)`), indépendant de `Math.random` que three.js consomme pour ses identifiants. `tests/trace.js` compare l'état du jeu image par image entre deux builds.
 
 Optimisations faites (mesures du 2026-10-31, 100 zombies) : un seul maillage par zombie vivant (pièces au moment de la mort), ombres instanciées, animations de foule échelonnées (`ZOMBIE.lod`), plus d'allocation dans la séparation, l'IA et les entrées, décor statique à matrices figées, gestion de la perte de contexte WebGL. Appels de rendu 722 à 123 ; logique des zombies 6,8 à 1,9 ms ; volume alloué 356 à 177 Ko par image.
+
+## Atelier (visionneuse d'assets)
+
+Second point d'entrée, `src/lab/` + `lab.src.html`, construit par `bash build.sh lab` (produit `index.lab.html`) ; il réutilise les modules du jeu (matériaux Erathic, chargeur du robot, modèle du zombie, démembrement, table de transitions).
+
+| Fichier | Rôle |
+| --- | --- |
+| `lab/viewer.js` | rendu, caméra orbitale, lumières du jeu, grille, plateau tournant, vues et planche de contrôle 4 vues |
+| `lab/assets.js` | chargeurs : robot, épée du robot (maillage isolé), zombie, épée de démonstration, fichier GLB ou FBX déposé |
+| `lab/anim.js` | lecture des clips, curseur de temps, écart de pose entre deux clips, test de transition |
+| `lab/tools.js` | inventaire, modes de matériaux, filaire, squelette, boîte, tenue d'arme, démembrement |
+| `lab/main.js` | assemblage et panneau |
+
+Fonctions : choix de l'objet ou dépôt d'un fichier (glisser-déposer) ; inventaire (triangles, maillages, os, matériaux, taille) ; matériaux (shaders Erathic, d'origine, gris Erathic, normales) et filaire ; clips groupés par source avec lecture, boucle, vitesse et temps ; transition A vers B avec écart de pose mesuré, fondu proposé par la table du jeu et synchronisation ; tenue d'arme (accrocher un modèle à un os, régler position, rotation et échelle, exporter les réglages en JSON) ; démembrement du zombie ; captures (image de la vue, planche 4 vues). Dans un artefact, l'enregistrement de fichiers passe par la capacité `downloads` (confirmation du lecteur).
