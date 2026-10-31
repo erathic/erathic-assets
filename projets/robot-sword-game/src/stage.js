@@ -33,6 +33,12 @@ export function createStage(host) {
     camT.x += (target.x * CAM_FOLLOW - camT.x) * f; camT.z += (target.z * CAM_FOLLOW - camT.z) * f;
     cam.position.set(camT.x + camOff.x, camOff.y, camT.z + camOff.z); cam.lookAt(camT.x, 0.3, camT.z);
   }
+  // perte du contexte graphique (fréquente sur mobile) : on autorise la restauration, three.js recharge alors ses ressources
+  const lostEl = document.createElement('div');
+  lostEl.style.cssText = 'position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:#1E1F22;color:#DBFF00;font:700 14px system-ui,sans-serif;letter-spacing:.12em;z-index:9';
+  lostEl.textContent = 'CONTEXTE GRAPHIQUE PERDU, RESTAURATION EN COURS'; document.body.appendChild(lostEl);
+  renderer.domElement.addEventListener('webglcontextlost', e => { e.preventDefault(); lostEl.style.display = 'flex'; });
+  renderer.domElement.addEventListener('webglcontextrestored', () => { lostEl.style.display = 'none'; });
   const render = () => renderer.render(scene, cam);
   return { renderer, scene, cam, resize, follow, render };
 }

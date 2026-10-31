@@ -30,5 +30,6 @@ export function createWorld(scene) {
   const slashMat = new THREE.MeshBasicMaterial({ color:C.lime, transparent:true, opacity:0, side:THREE.DoubleSide, depthWrite:false });
   const slash = new THREE.Mesh(new THREE.RingGeometry(0.9, 1.9, 24, 1, -Math.PI * 0.55, Math.PI * 1.1), slashMat);
   slash.rotation.x = -Math.PI / 2; slash.visible = false; slash.renderOrder = 2; scene.add(slash);
+  platform.traverse(o => { o.matrixAutoUpdate = false; o.updateMatrix(); });   // décor statique : matrices calculées une seule fois
   return { platform, blobTex, shadow, slash, slashMat };
 }

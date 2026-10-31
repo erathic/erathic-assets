@@ -39,6 +39,7 @@ export const ZOMBIE = {
   height: 1.9, speedMin: 0.85, speedRange: 0.25,
   anims: [['walk', 1.5], ['idle', 1], ['bite', 1.1]],        // [clé, vitesse]
   wave: [[-3.2, -3.2], [3.2, -3.2], [-3.2, 3.2], [3.2, 3.2]], waveDelay: 0.35,
+  lod: [[12, 2], [60, 3]],                                   // [nombre de zombies à partir duquel, mise à jour des animations une image sur N] ; animations de foule à fréquence réduite
   respawnEvery: 2,                                           // un nouveau zombie tous les N éliminés
   limbChance: { head:0.75, armL:0.5, armR:0.5, legL:0.22, legR:0.22 },
 };

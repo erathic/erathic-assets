@@ -6,12 +6,10 @@ const { chromium } = require('playwright');
   const b = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
   const p = await b.newPage({ viewport: { width: 900, height: 520 } });
   const errs = []; p.on('pageerror', e => errs.push(e.message));
-  await p.addInitScript(() => {            // boucle temps réel coupée (seul __game.step fait avancer le jeu) ; mulberry32 : Math.random reproductible
-    window.requestAnimationFrame = () => 0;
-    let a = 123456789; Math.random = () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
-  });
+  await p.addInitScript(() => { window.requestAnimationFrame = () => 0; });   // boucle temps réel coupée : seul __game.step fait avancer le jeu
   await p.goto('file://' + file);
   await p.waitForFunction('window.__game&&window.__game.ready()', { timeout: 90000 });
+  await p.evaluate(() => { window.__game.seed(123456789); window.__game.restart(); });   // graine du jeu, puis nouvelle partie : séquence aléatoire reproductible
   const snap = () => p.evaluate(() => { const g = window.__game, S = g.S, f = x => +x.toFixed(3);
     return [S.state, S.cur, S.step, S.hp, S.kills, f(S.y), ...g.pos().map(f), g.alive(), g.zombies.length, g.gore.pieces(),
       g.zombies.map(z => z.state[0] + f(z.g.position.x) + ',' + f(z.g.position.z)).join(';')].join('|'); });
