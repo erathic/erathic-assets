@@ -7,13 +7,14 @@ npm install                                   # à la racine du dépôt
 bash projets/robot-sword-game/prepare.sh      # produit projets/robot-sword-game/index.html
 ```
 
-Tests automatisés (Playwright, dossier `tests/`, à lancer depuis ce dossier après le build) : `node tests/trace.js` (non-régression déterministe : aléatoire figé, scénario scripté, trace de l'état ; comparer deux builds avec `diff`), `node tests/zt2.js` (parcours jusqu'à la victoire), `node tests/zt3.js` (défaite et rejouer), `node tests/ui.js` (joystick, boutons, clavier), `node tests/ct3.js` (durée des 4 coups du combo).
+Tests automatisés (Playwright, dossier `tests/`, à lancer depuis ce dossier après le build) : `node tests/trace.js` (non-régression déterministe : aléatoire figé, scénario scripté, trace de l'état ; comparer deux builds avec `diff`), `node tests/zt2.js` (parcours jusqu'à la victoire), `node tests/zt3.js` (défaite et rejouer), `node tests/ui.js` (joystick, boutons, clavier), `node tests/ct3.js` (durée des 4 coups du combo), `node tests/transitions.js` (table de transitions : fondus, synchronisation walk/run, vitesses rétablies).
 
 ## Modules (`src/`)
 
 | Fichier | Rôle |
 | --- | --- |
-| `config.js` | constantes, table du combo, listes d'animations, réglages des zombies, couleur du sang (données seules) |
+| `config.js` | constantes, table du combo, listes d'animations, table des transitions, réglages des zombies, couleur du sang (données seules) |
+| `transitions.js` | résolution d'une transition (fondu, synchronisation de phase) depuis `TRANSITIONS` |
 | `state.js` | état de la partie et remise à zéro |
 | `util.js` | interpolation d'angle, décodage base64 |
 | `shaders.js`, `materials.js` | shaders Erathic et matériaux partagés |
@@ -30,3 +31,7 @@ Tests automatisés (Playwright, dossier `tests/`, à lancer depuis ce dossier ap
 
 Les modules partagent un contexte `ctx` créé dans `main.js` ; les liens croisés (combat, zombies, interface) se résolvent à l'appel, sans import circulaire.
 Architecture, réglages et historique et réglages : voir la page Notion « Jeu de référence Robot à l'épée ».
+
+## Transitions d'animation
+
+Les durées de fondu ne sont plus dans le code : `TRANSITIONS` (`config.js`) donne une valeur par défaut, une durée par clip d'arrivée (`to`) et des exceptions par paire (`pairs`, par exemple `'walk>run'` avec `sync:true` pour caler la phase des pas). Pour mesurer les écarts de pose entre clips de packs différents et vérifier que les fondus conviennent : `node --no-warnings outils/transitions/pose_gap.mjs` (depuis la racine du dépôt).

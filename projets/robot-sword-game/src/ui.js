@@ -20,7 +20,7 @@ export function createUI(ctx) {
   function restart() {
     ctx.zombies.clear(); ctx.gore.clear();
     resetState(S, HP_MAX);
-    ctx.pl.group.position.set(0, 0, 0); S.cur = ''; ctx.pl.play('idle', 0.1); endEl.style.display = 'none'; ctx.zombies.startWave();
+    ctx.pl.group.position.set(0, 0, 0); S.cur = ''; ctx.pl.play('idle'); endEl.style.display = 'none'; ctx.zombies.startWave();
   }
   document.getElementById('bRe').addEventListener('pointerdown', e => { restart(); e.preventDefault(); });
   return { hud, finish, endShown, restart };

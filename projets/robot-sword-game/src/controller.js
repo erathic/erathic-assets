@@ -8,16 +8,16 @@ export function createController(ctx) {
   const { S, pl, input, world } = ctx, { slash, slashMat, shadow } = world;
   const fwd = new THREE.Vector3();
 
-  const play = (k, f) => pl.play(k, f);
+  const play = k => pl.play(k);
 
   function tryJump(grounded) {
     if (!S.jump) return; S.jump = false;
-    if (grounded && S.state !== 'attack' && S.state !== 'hurt') { S.vy = JV; S.state = 'air'; play('jstart', 0.08); }
+    if (grounded && S.state !== 'attack' && S.state !== 'hurt') { S.vy = JV; S.state = 'air'; play('jstart'); }
   }
   function tryAttack() {
     if (!S.atk) return; S.atk = false;
     if (S.state === 'attack') { if (S.step < COMBO.length - 1 && S.atkT > 0.05) S.queued = true; }      // mémorise le coup suivant (tampon d'entrée)
-    else if (S.state !== 'air' && S.state !== 'hurt') { S.state = 'attack'; S.step = 0; S.queued = false; S.atkT = 0; S.swung = false; play(COMBO[0].key, 0.06); slash.visible = true; }
+    else if (S.state !== 'air' && S.state !== 'hurt') { S.state = 'attack'; S.step = 0; S.queued = false; S.atkT = 0; S.swung = false; play(COMBO[0].key); slash.visible = true; }
   }
   function move(dir, mag, dt) {
     const moveMul = S.state === 'attack' ? 0.18 : S.state === 'hurt' ? 0.4 : 1;
@@ -31,8 +31,8 @@ export function createController(ctx) {
   function vertical(dt) {
     if (S.state === 'air') {
       S.vy -= G * dt; S.y += S.vy * dt;
-      if (S.y <= 0) { S.y = 0; S.vy = 0; S.state = 'land'; S.landT = 0; play('jland', 0.06); }
-      else if (S.cur === 'jstart' && pl.acts.jstart.time > 0.35) play('jloop', 0.12);
+      if (S.y <= 0) { S.y = 0; S.vy = 0; S.state = 'land'; S.landT = 0; play('jland'); }
+      else if (S.cur === 'jstart' && pl.acts.jstart.time > 0.35) play('jloop');
     }
   }
   function timers(dt) {
@@ -49,11 +49,11 @@ export function createController(ctx) {
     slashMat.opacity = k > 0 ? Math.max(0, 0.85 * (1 - Math.max(0, k - 0.2))) : 0;
     slash.scale.setScalar((0.8 + 0.5 * Math.min(1, Math.max(0, k))) * c.sc);
     if (S.queued && S.atkT >= Math.min(c.cut, c.end - 0.05)) {                    // enchaîne le coup suivant
-      S.step++; S.queued = false; S.atkT = 0; S.swung = false; play(COMBO[S.step].key, 0.06); slash.visible = true;
+      S.step++; S.queued = false; S.atkT = 0; S.swung = false; play(COMBO[S.step].key); slash.visible = true;
     } else if (S.atkT > c.end) { S.state = 'ground'; slash.visible = false; S.step = 0; }
   }
   function locomotion(mag) {
-    if (S.state === 'ground') play(mag > 0 ? (mag > 0.6 ? 'run' : 'walk') : 'idle', 0.18);
+    if (S.state === 'ground') play(mag > 0 ? (mag > 0.6 ? 'run' : 'walk') : 'idle');
   }
   function pose() {
     const p = pl.group.position;

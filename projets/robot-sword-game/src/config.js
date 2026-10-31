@@ -26,6 +26,14 @@ export const ANIMS = {
   jumps:  [['jstart', 'Jump_Start', false, 2.3], ['jloop', 'Jump_Loop', true, 1.2], ['jland', 'Jump_Land', false, 2.4]],   // jumps.json
 };
 
+// transitions entre animations. Durée du fondu (s) et synchronisation de phase (warp) pour les boucles de même nature.
+// Résolution : pairs['de>vers'] puis to['vers'] puis default. Voir transitions.js ; écarts de pose mesurés par outils/transitions/pose_gap.js
+export const TRANSITIONS = {
+  default: { fade:0.15, sync:false },
+  to: { idle:0.18, walk:0.18, run:0.18, f1:0.06, f2:0.06, f3:0.06, f4:0.06, jstart:0.08, jloop:0.12, jland:0.06, hit:0.05, death:0.1 },
+  pairs: { 'walk>run':{ sync:true }, 'run>walk':{ sync:true } },
+};
+
 // zombies
 export const ZOMBIE = {
   height: 1.9, speedMin: 0.85, speedRange: 0.25,

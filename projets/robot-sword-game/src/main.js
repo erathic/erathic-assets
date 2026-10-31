@@ -44,4 +44,4 @@ ctx.stage.renderer.setAnimationLoop(() => { const n = performance.now(); const d
 window.__game = { S, stick:ctx.input.stick, zombies:ctx.zombies.list, gore:ctx.gore, restart:ctx.ui.restart,
   step: (n, dt = 1 / 30) => { frozen = true; for (let i = 0; i < n; i++) step(dt); ctx.stage.render(); },
   jump: () => { S.jump = true; }, atk: () => { S.atk = true; }, pos: () => ctx.pl.group.position.toArray(), ready: () => ctx.pl.ready,
-  player:ctx.pl.group, THREE, alive:ctx.zombies.alive, hud:ctx.ui.hud };
+  player:ctx.pl.group, pl:ctx.pl, THREE, alive:ctx.zombies.alive, hud:ctx.ui.hud };

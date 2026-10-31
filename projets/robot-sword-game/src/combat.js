@@ -16,8 +16,8 @@ export function createCombat(ctx) {
 
   function damagePlayer() {
     if (S.inv > 0 || S.over) return; S.hp--; S.inv = 1.2; ctx.ui.hud();
-    if (S.hp <= 0) { S.over = true; S.state = 'dead'; S.deadT = 0; pl.play('death', 0.1); world.slash.visible = false; S.queued = false; return; }
-    S.state = 'hurt'; S.queued = false; S.hurtT = 0.4; pl.play('hit', 0.05); world.slash.visible = false;
+    if (S.hp <= 0) { S.over = true; S.state = 'dead'; S.deadT = 0; pl.play('death'); world.slash.visible = false; S.queued = false; return; }
+    S.state = 'hurt'; S.queued = false; S.hurtT = 0.4; pl.play('hit'); world.slash.visible = false;
   }
 
   function killZombie(z) {

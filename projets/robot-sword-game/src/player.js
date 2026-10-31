@@ -5,6 +5,7 @@ import { partGradient } from './shaders.js';
 import { C, ANIMS } from './config.js';
 import { BASEY, bounds, limeMat, greyMat, darkMat } from './materials.js';
 import { b64ToBuffer } from './util.js';
+import { resolveTransition } from './transitions.js';
 import BOT_B64 from '../bot.b64.txt';
 import JUMPS from '../jumps.json';
 import FRANK from '../frank_clips.json';   // Frank RPG 2Handed (combo, coup reçu, mort), adapté au squelette du robot
@@ -35,7 +36,7 @@ function clipFromJson(name, j) {
 export function createPlayer(ctx, { onReady, onError }) {
   const { S } = ctx, { scene } = ctx.stage;
   const group = new THREE.Group(); scene.add(group);
-  const pl = { group, mixer:null, acts:{}, ready:false, play };
+  const pl = { group, mixer:null, acts:{}, baseTs:{}, ready:false, last:null, play };
 
   new GLTFLoader().parse(b64ToBuffer(BOT_B64), '', gltf => {
     const model = gltf.scene; group.add(model);
@@ -47,19 +48,22 @@ export function createPlayer(ctx, { onReady, onError }) {
     group.updateMatrixWorld(true); const hw = new THREE.Vector3(); model.getObjectByName('Hips').getWorldPosition(hw); model.position.x -= hw.x / sc; model.position.z -= hw.z / sc;
     // animations (table ANIMS de config.js)
     pl.mixer = new THREE.AnimationMixer(model);
-    const add = (key, clip, loop, ts) => { const a = pl.mixer.clipAction(clip); a.setLoop(loop ? THREE.LoopRepeat : THREE.LoopOnce, Infinity); a.clampWhenFinished = !loop; a.timeScale = ts; pl.acts[key] = a; };
+    const add = (key, clip, loop, ts) => { const a = pl.mixer.clipAction(clip); a.setLoop(loop ? THREE.LoopRepeat : THREE.LoopOnce, Infinity); a.clampWhenFinished = !loop; a.timeScale = ts; pl.acts[key] = a; pl.baseTs[key] = ts; };
     ANIMS.native.forEach(([key, name, loop, ts]) => add(key, gltf.animations.find(a => a.name === name), loop, ts));
     ANIMS.frank.forEach(([key, name, loop, ts]) => add(key, clipFromJson(name, FRANK[name]), loop, ts));
     ANIMS.jumps.forEach(([key, name, loop, ts]) => add(key, clipFromJson(name, JUMPS[name]), loop, ts));
-    play('idle', 0);
+    play('idle');
     pl.ready = true; onReady && onReady();
   }, err => onError && onError(err));
 
-  // lecture d'un clip avec fondu enchaîné
-  function play(key, fade = 0.15) {
+  // lecture d'un clip : fondu et synchronisation de phase lus dans la table de transitions (fadeOverride force la durée)
+  function play(key, fadeOverride) {
     if (S.cur === key || !pl.acts[key]) return;
     const next = pl.acts[key], prev = pl.acts[S.cur];
-    next.reset().play(); if (prev) next.crossFadeFrom(prev, fade, false); S.cur = key;
+    const tr = resolveTransition(S.cur, key); const fade = fadeOverride ?? tr.fade;
+    next.timeScale = pl.baseTs[key];                 // un warp précédent peut avoir modifié la vitesse : on la rétablit
+    next.reset().play(); if (prev) next.crossFadeFrom(prev, fade, tr.sync);
+    pl.last = { from:S.cur, to:key, fade, sync:tr.sync }; S.cur = key;
   }
   return pl;
 }
