@@ -14,12 +14,15 @@ Le catalogue (fiches, licences, statuts, liens entre originaux et dérivés) est
 | `logos/` | logos Erathic (PDF, SVG, couches du pictogramme) |
 | `interface/`, `sons/` | à venir |
 | `derives/` | conversions, variantes et leurs recettes (`bot_clips_v1`) |
-| `outils/` | outils réutilisables (`retarget`) |
-| `projets/` | sources des projets (`robot-sword-game`, `ile-erathic`, `erathic-motion`) |
+| `outils/` | outils réutilisables (`retarget`, `transitions`, `atelier-mcp` : atelier local en ligne de commande et serveur MCP) |
+| `projets/` | sources des projets (`robot-sword-game` : jeu de référence, atelier de visualisation et niveau de survie ; `ile-erathic` ; `erathic-motion`) |
+| `docs/` | guide de démarrage d'une session (`DEMARRAGE.md`) |
 
 Chaque dossier d'asset contient une `fiche.json` : identifiant (`type.pack.nom`), source, auteur, licence, redistribuable, famille de squelette, fichiers avec empreinte SHA-256 abrégée, lien vers la fiche Notion.
 
 ## Charger les assets dans une session
+
+Guide complet (construire, tester, pièges connus) : `docs/DEMARRAGE.md`.
 
 ```bash
 git clone --depth 1 https://github.com/erathic/erathic-assets
