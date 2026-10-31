@@ -40,7 +40,7 @@ Les durées de fondu ne sont plus dans le code : `TRANSITIONS` (`config.js`) don
 
 ## Performance
 
-Banc d'essai : `node tests/bench.js index.html 4,25,50,100` relève, pour N zombies, les millisecondes par image de chaque système (joueur, zombies, mixers, séparation, sang, rendu), les appels de rendu, les triangles et le volume alloué par image (profileur d'allocations du navigateur). `bash build.sh dev` produit `index.dev.html` non minifié pour lire les noms de fonctions du profil. Le rendu se fait en logiciel dans l'environnement de test : le temps de rendu n'est pas représentatif d'un vrai GPU ; les temps de logique donnent un ordre de grandeur (variation d'environ 30 % d'un passage à l'autre), les décomptes (appels de rendu, triangles) sont exacts.
+Banc d'essai : `node tests/bench.js index.html 4,25,50,100` relève, pour N zombies, les millisecondes par image de chaque système (joueur, zombies, mixers, séparation, sang, rendu), les appels de rendu, les triangles et le volume alloué par image (profileur d'allocations du navigateur). `bash build.sh dev` produit `index.dev.html` non minifié pour lire les noms de fonctions du profil. Le rendu se fait en logiciel dans l'environnement de test : le temps de rendu n'est pas représentatif d'un vrai GPU ; les temps de logique donnent un ordre de grandeur (variation d'un passage à l'autre : environ 30 %, parfois du simple au double sur les petites valeurs), les décomptes (appels de rendu, triangles) sont exacts.
 
 Tests déterministes : le jeu a son propre générateur aléatoire (`util.js`, `seed(n)`), indépendant de `Math.random` que three.js consomme pour ses identifiants. `tests/trace.js` compare l'état du jeu image par image entre deux builds.
 
