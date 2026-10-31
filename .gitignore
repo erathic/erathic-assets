@@ -4,3 +4,7 @@ bundle.js
 index.html
 /tmp/
 .DS_Store
+node_modules
+projets/robot-sword-game/frank_clips.json
+projets/robot-sword-game/jumps.json
+package-lock.json
