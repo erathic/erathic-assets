@@ -7,7 +7,7 @@ npm install                                   # à la racine du dépôt
 bash projets/robot-sword-game/prepare.sh      # produit projets/robot-sword-game/index.html
 ```
 
-Tests automatisés (Playwright, dossier `tests/`, à lancer depuis ce dossier après le build) : `node tests/trace.js` (non-régression déterministe : aléatoire figé, scénario scripté, trace de l'état ; comparer deux builds avec `diff`), `node tests/zt2.js` (parcours jusqu'à la victoire), `node tests/zt3.js` (défaite et rejouer), `node tests/ui.js` (joystick, boutons, clavier), `node tests/ct3.js` (durée des 4 coups du combo), `node tests/transitions.js` (table de transitions : fondus, synchronisation walk/run, vitesses rétablies), `node tests/lost.js` (perte et restauration du contexte WebGL), `node tests/bench.js index.html 4,25,50,100` (banc d'essai de performance, voir plus bas), `node tests/lab.js index.lab.html` (atelier, voir plus bas).
+Tests automatisés (Playwright, dossier `tests/`, à lancer depuis ce dossier après le build) : `node tests/trace.js` (non-régression déterministe : aléatoire figé, scénario scripté, trace de l'état ; comparer deux builds avec `diff`), `node tests/zt2.js` (parcours jusqu'à la victoire), `node tests/zt3.js` (défaite et rejouer), `node tests/ui.js` (joystick, boutons, clavier), `node tests/ct3.js` (durée des 4 coups du combo), `node tests/transitions.js` (table de transitions : fondus, synchronisation walk/run, vitesses rétablies), `node tests/lost.js` (perte et restauration du contexte WebGL), `node tests/bench.js index.html 4,25,50,100` (banc d'essai de performance, voir plus bas), `node tests/lab.js index.lab.html` (atelier, voir plus bas), `node tests/survie.js index.survie.html` (niveau de survie : 25 vérifications), `tests/measure_robot.js` (mesures sur le robot pour régler les armes : repère de l'épée, pose de visée, instants d'impact).
 
 ## Modules (`src/`)
 
@@ -59,3 +59,22 @@ Second point d'entrée, `src/lab/` + `lab.src.html`, construit par `bash build.s
 | `lab/main.js` | assemblage et panneau |
 
 Fonctions : choix de l'objet ou dépôt d'un fichier (glisser-déposer) ; inventaire (triangles, maillages, os, matériaux, taille) ; matériaux (shaders Erathic, d'origine, gris Erathic, normales) et filaire ; clips groupés par source avec lecture, boucle, vitesse et temps ; transition A vers B avec écart de pose mesuré, fondu proposé par la table du jeu et synchronisation ; tenue d'arme (accrocher un modèle à un os, régler position, rotation et échelle, exporter les réglages en JSON) ; démembrement du zombie ; captures (image de la vue, planche 4 vues). Dans un artefact, l'enregistrement de fichiers passe par la capacité `downloads` (confirmation du lecteur).
+
+## Niveau de survie « Île Erathic »
+
+Troisième point d'entrée (`src/survie/`, `survie.src.html`), construit par `bash build.sh survie` (produit `index.survie.html`). Il réutilise le socle du jeu (scène, robot, zombies, sang, ombres instanciées, entrées) et la scène de `projets/ile-erathic` (logo extrudé, cocotiers et rochers Kenney, shaders Erathic).
+
+**Règles.** Le robot a 7 points de vie (une morsure en retire 1). Des vagues de zombies de plus en plus nombreuses (6, puis +3 par vague, 45 au plus, 26 vivants en même temps), un peu plus rapides et plus résistants au fil du temps. Tous les 10 zombies éliminés, un super zombie apparaît (shader jaune, 1,25 fois plus grand, 1,3 fois plus rapide, 16 points de vie) ; en mourant il lâche l'arme suivante, dans l'ordre : épée, épée à deux mains, pistolet, mitrailleuse, canon laser, puis des soins (+2). On part les mains nues ; une arme ramassée remplace la précédente. But : survivre le plus longtemps (vague, éliminés, temps ; meilleur score gardé dans le navigateur).
+
+| Module | Rôle |
+| --- | --- |
+| `config.js` | données : arène, vagues, super zombie, ordre des drops, animations, table `WEAPONS` |
+| `level.js`, `colliders.js` | île heptagonale flottante, logo, cocotiers, rochers ; collisions en cercles et segments (logo, rochers, troncs, bord) |
+| `weapons.js` | modèles d'armes accrochés à l'os `Weapon`, équipement |
+| `controller.js`, `combat.js` | machine à états pilotée par l'arme (combos de mêlée, tir à l'auto-visée, faisceau laser traversant), dégâts, mort |
+| `waves.js`, `pickups.js` | vagues, super zombies, objets à ramasser |
+| `ui.js`, `fx.js`, `main.js` | interface (vie, vague, arme, bannières, fin, record), habillage, assemblage |
+
+Armes (dégâts par coup) : mains nues 1 à 2, épée 2 puis 3, épée à deux mains 3, 3, 4 puis 6 (arc large), pistolet 2 (1 tir toutes les 0,38 s), mitrailleuse 1 (9 tirs par seconde, léger écart), canon laser 6 à chaque zombie sur la ligne (1 tir toutes les 1,1 s). Le tir à distance vise le zombie le plus proche ; tenir le bouton « COUP » (ou J) pour tirer en continu.
+
+Mesures du 2026-10-31 (sans GPU) : vague 1, environ 2,5 ms de logique par image, 123 appels de rendu dont une centaine pour l'île elle-même (décor statique à fusionner si besoin sur téléphone).

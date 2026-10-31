@@ -24,18 +24,7 @@ export function createCombat(ctx) {
   function killZombie(z) {
     if (z.dead) return; z.dead = true; z.state = 'dead'; z.t = 0; S.kills++;
     const d = new THREE.Vector3().subVectors(z.g.position, pl.group.position).setY(0).normalize(); z.push = d;   // recul
-    ctx.zombies.reveal(z);
-    // sang + démembrement
-    z.g.updateMatrixWorld(true); const wp = new THREE.Vector3(), chest = z.model.getObjectByName('Spine1');
-    if (chest) { chest.getWorldPosition(wp); ctx.gore.burst(wp, d, 60, 2.6); }
-    const picks = []; for (const k in ZOMBIE.limbChance) if (rand() < ZOMBIE.limbChance[k]) picks.push(k);
-    if (!picks.length) picks.push('head');
-    picks.forEach(k => {
-      const part = z.model.getObjectByName('part_' + k); const bone = z.model.getObjectByName(LIMBS[k].stump); if (!part) return;
-      const imp = new THREE.Vector3(d.x * (1.6 + rand() * 2) + (rand() - 0.5) * 2, 3.2 + rand() * 2.4, d.z * (1.6 + rand() * 2) + (rand() - 0.5) * 2);
-      ctx.gore.detach(part, zMat, imp);
-      ctx.gore.spurt(p => { z.g.updateMatrixWorld(true); bone.getWorldPosition(p); }, 0.7 + rand() * 0.3);
-    });
+    ctx.zombies.explode(z, d);
     if (S.kills % ZOMBIE.respawnEvery === 0) ctx.zombies.randomSpawn();   // tous les N éliminés, un nouveau apparaît
     ctx.ui.hud(); if (ctx.zombies.alive() === 0) setTimeout(() => ctx.ui.finish(true), 900);
   }

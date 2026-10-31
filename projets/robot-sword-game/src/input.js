@@ -23,11 +23,13 @@ export function createInput({ onJump, onAttack }) {
   const stickEnd = e => { if (e.pointerId !== stickId) return; stickId = null; stick.x = stick.y = 0; knob.style.transform = ''; };
   stickEl.addEventListener('pointerup', stickEnd); stickEl.addEventListener('pointercancel', stickEnd);
 
-  // boutons
+  // boutons ; held[id] = bouton maintenu (tir en continu)
+  const held = {};
   function bind(id, fn) { const el = document.getElementById(id);
-    el.addEventListener('pointerdown', e => { el.classList.add('on'); fn(); e.preventDefault(); });
-    const off = () => el.classList.remove('on'); el.addEventListener('pointerup', off); el.addEventListener('pointerleave', off); el.addEventListener('pointercancel', off); }
+    el.addEventListener('pointerdown', e => { el.classList.add('on'); held[id] = true; fn(); e.preventDefault(); });
+    const off = () => { el.classList.remove('on'); held[id] = false; }; el.addEventListener('pointerup', off); el.addEventListener('pointerleave', off); el.addEventListener('pointercancel', off); }
   bind('bAtk', onAttack); bind('bJmp', onJump);
+  const attackHeld = () => !!(keys.j || keys.enter || held.bAtk);
   document.addEventListener('contextmenu', e => e.preventDefault());
 
   // direction de déplacement dans le monde + intensité (0 à 1)
@@ -41,5 +43,5 @@ export function createInput({ onJump, onAttack }) {
     out.dir.set(0, 0, 0).addScaledVector(SCREEN_RIGHT, x).addScaledVector(SCREEN_UP, -y).setY(0).normalize(); out.mag = m;
     return out;
   }
-  return { keys, stick, read };
+  return { keys, stick, read, attackHeld };
 }

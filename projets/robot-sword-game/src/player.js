@@ -33,10 +33,11 @@ export function clipFromJson(name, j) {
   return new THREE.AnimationClip(name, j.dur, tr);
 }
 
-export function createPlayer(ctx, { onReady, onError }) {
+// anims : table { native, frank, jumps } de [clé, nom du clip, boucle, vitesse] (défaut : ANIMS de config.js) ; initial : clé jouée au chargement
+export function createPlayer(ctx, { onReady, onError, anims = ANIMS, initial = 'idle' }) {
   const { S } = ctx, { scene } = ctx.stage;
   const group = new THREE.Group(); scene.add(group);
-  const pl = { group, mixer:null, acts:{}, baseTs:{}, ready:false, last:null, play };
+  const pl = { group, mixer:null, acts:{}, baseTs:{}, ready:false, last:null, play, restart };
 
   new GLTFLoader().parse(b64ToBuffer(BOT_B64), '', gltf => {
     const model = gltf.scene; group.add(model);
@@ -49,10 +50,10 @@ export function createPlayer(ctx, { onReady, onError }) {
     // animations (table ANIMS de config.js)
     pl.mixer = new THREE.AnimationMixer(model);
     const add = (key, clip, loop, ts) => { const a = pl.mixer.clipAction(clip); a.setLoop(loop ? THREE.LoopRepeat : THREE.LoopOnce, Infinity); a.clampWhenFinished = !loop; a.timeScale = ts; pl.acts[key] = a; pl.baseTs[key] = ts; };
-    ANIMS.native.forEach(([key, name, loop, ts]) => add(key, gltf.animations.find(a => a.name === name), loop, ts));
-    ANIMS.frank.forEach(([key, name, loop, ts]) => add(key, clipFromJson(name, FRANK[name]), loop, ts));
-    ANIMS.jumps.forEach(([key, name, loop, ts]) => add(key, clipFromJson(name, JUMPS[name]), loop, ts));
-    play('idle');
+    anims.native.forEach(([key, name, loop, ts]) => add(key, gltf.animations.find(a => a.name === name), loop, ts));
+    anims.frank.forEach(([key, name, loop, ts]) => add(key, clipFromJson(name, FRANK[name]), loop, ts));
+    anims.jumps.forEach(([key, name, loop, ts]) => add(key, clipFromJson(name, JUMPS[name]), loop, ts));
+    pl.model = model; play(initial);
     pl.ready = true; onReady && onReady();
   }, err => onError && onError(err));
 
@@ -64,6 +65,11 @@ export function createPlayer(ctx, { onReady, onError }) {
     next.timeScale = pl.baseTs[key];                 // un warp précédent peut avoir modifié la vitesse : on la rétablit
     next.reset().play(); if (prev) next.crossFadeFrom(prev, fade, tr.sync);
     pl.last = { from:S.cur, to:key, fade, sync:tr.sync }; S.cur = key;
+  }
+  // relance un clip même s'il est déjà en cours (tirs successifs)
+  function restart(key) {
+    const a = pl.acts[key]; if (!a) return; if (S.cur !== key) { play(key); return; }
+    a.timeScale = pl.baseTs[key]; a.reset().play();
   }
   return pl;
 }

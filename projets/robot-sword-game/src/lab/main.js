@@ -6,6 +6,7 @@ import { zMat } from '../materials.js';
 import { createViewer } from './viewer.js';
 import { loadRobot, loadRobotSword, loadZombie, makeDemoSword, loadFile } from './assets.js';
 import { createAnim, suggestFade } from './anim.js';
+import { MODELS, GUN_QUAT } from '../survie/weapons.js';
 import { inspect, prepareMaterials, applyMaterialMode, setWireframe, createHelpers, createWeaponTool, createDismember } from './tools.js';
 
 const $ = id => document.getElementById(id);
@@ -87,11 +88,11 @@ function buildWeapon() {
   $('wBone').replaceChildren(...bones.map(b => { const o = el('option', null, b); o.value = b; return o; })); $('wBone').value = bones.includes('Weapon') ? 'Weapon' : bones.find(b => /hand.*r|right.*hand|hand_r/i.test(b)) || bones[0];
   $('wJson').value = ''; $('wCtl').replaceChildren(); ctl = {};
 }
-function weaponControls() {
+function weaponControls(def) {
   const w = $('wCtl'); w.replaceChildren(); ctl = {}; const r = localH * 0.35, rf = v => v.toFixed(0) + '°';
   [['px', 'x', -r], ['py', 'y', -r], ['pz', 'z', -r]].forEach(([k, l]) => slider(w, k, 'position ' + l, -r, r, r / 200, 0));
-  ['rx', 'ry', 'rz'].forEach((k, i) => slider(w, k, 'rotation ' + 'xyz'[i], -180, 180, 1, 0, rf));
-  slider(w, 's', 'échelle', 0.05, 4 / sc, 0.005 / sc, 1 / sc);
+  ['rx', 'ry', 'rz'].forEach((k, i) => slider(w, k, 'rotation ' + 'xyz'[i], -180, 180, 1, def ? def.rot[i] : 0, rf));
+  slider(w, 's', 'échelle', 0.05, 4 / sc, 0.005 / sc, def ? def.scale : 1 / sc);
 }
 function applyWeapon() {
   if (!wtool.attached) return; const g = k => +ctl[k].value;
@@ -100,9 +101,13 @@ function applyWeapon() {
 $('bWFile').onclick = () => $('wFile').click();
 $('wFile').onchange = async e => { const f = e.target.files[0]; if (!f) return; try { weaponFile = await loadFile(f); prepareMaterials(weaponFile.root); $('wSrc').value = 'file'; $('wFileName').textContent = f.name + ' prêt'; } catch (err) { msg(String(err.message || err)); } };
 $('bWAttach').onclick = () => {
-  const src = $('wSrc').value; const w = src === 'file' ? weaponFile : makeDemoSword(); if (!w) { msg('Choisir d\'abord un fichier d\'arme.'); return; }
+  const src = $('wSrc').value; let def = null, w;
+  if (src.startsWith('game:')) { const id = src.slice(5), e = new THREE.Euler().setFromQuaternion(GUN_QUAT), gun = id === 'pistol' || id === 'mg' || id === 'laser';   // modèles du jeu : mêmes repères et mêmes unités que dans le jeu
+    w = { root: MODELS[id](), name: 'jeu : ' + id }; def = { rot: gun ? [e.x, e.y, e.z].map(r => Math.round(r * 180 / Math.PI)) : [0, 0, 0], scale: 1 }; }
+  else w = src === 'file' ? weaponFile : makeDemoSword();
+  if (!w) { msg('Choisir d\'abord un fichier d\'arme.'); return; }
   try { wtool.attach(obj.root, w.root, w.name, $('wBone').value, localH * 0.08); } catch (err) { msg(err.message); return; }
-  weaponControls(); applyWeapon(); wtool.showAxes($('bWAxes').classList.contains('on')); msg('');
+  weaponControls(def); applyWeapon(); wtool.showAxes($('bWAxes').classList.contains('on')); msg('');
 };
 $('bWDetach').onclick = () => { wtool.detach(); $('wJson').value = ''; $('wCtl').replaceChildren(); };
 $('bWAxes').onclick = e => { e.target.classList.toggle('on'); wtool.showAxes(e.target.classList.contains('on')); };
@@ -163,4 +168,4 @@ viewer.onFrame(dt => {
 (async () => { setObject(await loadRobot()); })().catch(err => msg(String(err.message || err)));
 
 // accès pour les tests automatisés
-window.__lab = { viewer, anim, wtool, gore, dis, setObject, loadRobot, loadRobotSword, loadZombie, makeDemoSword, loadFile, openFile, get obj() { return obj; }, measure, inspect, THREE, suggestFade };
+window.__lab = { MODELS, GUN_QUAT, viewer, anim, wtool, gore, dis, setObject, loadRobot, loadRobotSword, loadZombie, makeDemoSword, loadFile, openFile, get obj() { return obj; }, measure, inspect, THREE, suggestFade };

@@ -5,14 +5,14 @@ import { C, VIEW, CAM_OFFSET, CAM_FOLLOW, CAM_SMOOTH } from './config.js';
 // base écran -> monde de la vue isométrique
 export const SCREEN_RIGHT = new THREE.Vector3(1, 0, -1).normalize(), SCREEN_UP = new THREE.Vector3(-1, 0, -1).normalize();
 
-export function createStage(host) {
+export function createStage(host, { view = VIEW } = {}) {
   const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:false, preserveDrawingBuffer:true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   renderer.setClearColor(C.noir, 1);
   host.appendChild(renderer.domElement);
   const scene = new THREE.Scene();
   const camOff = new THREE.Vector3(...CAM_OFFSET), camT = new THREE.Vector3();
-  const cam = new THREE.OrthographicCamera(-VIEW, VIEW, VIEW, -VIEW, 4, 40);
+  const cam = new THREE.OrthographicCamera(-view, view, view, -view, 4, 40);
   cam.position.copy(camOff); cam.lookAt(0, 0.3, 0);
   scene.add(new THREE.AmbientLight(0xffffff, 0.5));
   const sun = new THREE.DirectionalLight(0xffffff, 2.6); sun.position.set(7, 9, 3); scene.add(sun);
@@ -21,8 +21,8 @@ export function createStage(host) {
   function resize() {
     const w = host.clientWidth, h = host.clientHeight, a = w / h;
     renderer.setSize(w, h, false);
-    if (a >= 1) { cam.left = -VIEW * a; cam.right = VIEW * a; cam.top = VIEW; cam.bottom = -VIEW; }
-    else { cam.left = -VIEW; cam.right = VIEW; cam.top = VIEW / a; cam.bottom = -VIEW / a; }
+    if (a >= 1) { cam.left = -view * a; cam.right = view * a; cam.top = view; cam.bottom = -view; }
+    else { cam.left = -view; cam.right = view; cam.top = view / a; cam.bottom = -view / a; }
     cam.updateProjectionMatrix();
   }
   window.addEventListener('resize', resize); resize();

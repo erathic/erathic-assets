@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>Erathic - Île Erathic : survie</title>
+<style>
+html,body{margin:0;height:100%;background:#1E1F22;overflow:hidden;overscroll-behavior:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+#app{position:fixed;inset:0;touch-action:none}
+canvas{display:block;width:100%;height:100%;touch-action:none}
+#ui{position:fixed;inset:0;pointer-events:none;font-family:Montserrat,system-ui,-apple-system,"Segoe UI",sans-serif}
+.oct{clip-path:polygon(30% 0,70% 0,100% 30%,100% 70%,70% 100%,30% 100%,0 70%,0 30%)}
+#stick{position:absolute;left:max(24px,env(safe-area-inset-left));bottom:max(28px,env(safe-area-inset-bottom));width:190px;height:190px;pointer-events:auto;touch-action:none}
+#stick .base{position:absolute;left:25px;top:25px;width:140px;height:140px;background:#DBFF00}
+#stick .base::before{content:"";position:absolute;inset:3px;background:#1E1F22;clip-path:inherit}
+#stick .knob{position:absolute;left:63px;top:63px;width:64px;height:64px;background:#DBFF00}
+.btn{position:absolute;pointer-events:auto;touch-action:none;display:flex;align-items:center;justify-content:center;font-weight:800;letter-spacing:.08em;font-size:15px;color:#1E1F22}
+.btn.a{background:#DBFF00;width:104px;height:104px}
+.btn.b{background:#DBFF00;width:104px;height:104px;color:#DBFF00}
+.btn.b::before{content:"";position:absolute;inset:3px;background:#1E1F22;clip-path:inherit}
+.btn span{position:relative}
+.btn.on{filter:brightness(1.25)}
+#bAtk{right:max(26px,env(safe-area-inset-right));bottom:max(150px,calc(env(safe-area-inset-bottom) + 122px))}
+#bJmp{right:max(120px,calc(env(safe-area-inset-right) + 94px));bottom:max(40px,env(safe-area-inset-bottom))}
+#wpn{position:absolute;top:60px;left:50%;transform:translateX(-50%);color:#D9D9D9;font-weight:800;font-size:12px;letter-spacing:.14em}
+#banner{position:absolute;top:30%;left:0;right:0;text-align:center;color:#DBFF00;font-weight:800;font-size:40px;letter-spacing:.14em;opacity:0;pointer-events:none;text-shadow:0 2px 0 #1E1F22}
+#hint{position:absolute;left:18px;bottom:14px;color:#D9D9D9;font-size:12px;font-weight:600;letter-spacing:.04em;opacity:.8;line-height:1.5}
+#hint b{color:#DBFF00;font-weight:700}
+@media (pointer:coarse){#hint{display:none}}
+#hud{position:absolute;top:14px;left:50%;transform:translateX(-50%);display:flex;gap:18px;align-items:center;padding:8px 14px;background:#1E1F22;border:2px solid #DBFF00;color:#DBFF00;font-weight:800;font-size:13px;letter-spacing:.1em;white-space:pre}
+#hp{display:flex;gap:5px}#hp i{display:block;width:14px;height:14px;background:#DBFF00}#hp i.off{background:none;border:2px solid #DBFF00;box-sizing:border-box}
+#end{position:fixed;inset:0;z-index:5;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:rgba(30,31,34,.84);pointer-events:auto}
+#endT{color:#DBFF00;font-weight:800;font-size:46px;letter-spacing:.12em}#endS{color:#D9D9D9;font-size:14px;font-weight:600;letter-spacing:.06em;white-space:pre}
+#endB{color:#DBFF00;font-size:12px;font-weight:700;letter-spacing:.08em;min-height:1.2em}
+#bRe{position:static;width:170px;height:76px}
+#load{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;color:#DBFF00;font:700 14px system-ui,sans-serif;letter-spacing:.12em;background:#1E1F22;transition:opacity .4s}
+</style></head><body>
+<div id="app"></div>
+<div id="ui">
+  <div id="hud"><div id="hp"></div><div id="cnt"></div></div>
+  <div id="wpn"></div><div id="banner"></div>
+  <div id="hint"><b>ZQSD / flèches</b> déplacer · <b>Espace</b> saut · <b>J</b> coup ou tir (maintenir pour tirer en continu)</div>
+  <div id="stick"><div class="base oct"></div><div class="knob oct"></div></div>
+  <div class="btn a oct" id="bAtk"><span>COUP</span></div>
+  <div class="btn b oct" id="bJmp"><span>SAUT</span></div>
+</div>
+<div id="end"><div id="endT"></div><div id="endS"></div><div id="endB"></div><div class="btn a oct" id="bRe"><span>REJOUER</span></div></div>
+<div id="load">CHARGEMENT</div>
+<script>/*BUNDLE*/</script></body></html>
