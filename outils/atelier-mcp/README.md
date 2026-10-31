@@ -11,7 +11,7 @@ Inspecte et allège des modèles GLB sans jamais toucher à l'original : chaque 
 
 ### Brancher le serveur MCP dans l'app Claude desktop
 
-Éditer `~/Library/Application Support/Claude/claude_desktop_config.json` (le créer s'il n'existe pas) :
+Éditer `~/Library/Application Support/Claude/claude_desktop_config.json` (le créer s'il n'existe pas ; chemin et format donnés de mémoire, à confirmer pour la version installée de l'app) :
 
 ```json
 {
