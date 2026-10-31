@@ -1,0 +1,27 @@
+{
+  "id": "model.kenney_nature",
+  "nom": "Kenney Nature Kit",
+  "type": "Modèle 3D",
+  "version": 1,
+  "auteur": "Kenney",
+  "licence": "CC0",
+  "redistribuable": "oui",
+  "famille_squelette": "Aucune",
+  "elements": 330,
+  "source": "archive fournie par Eric",
+  "recu_le": "2026-10-31",
+  "notes": "Archive d origine conservée telle quelle ; le fichier License.txt est une copie de celui de l archive.",
+  "notion": "https://app.notion.com/p/40a28943c49d81b899c4cdbcc1eba3eb",
+  "fichiers": [
+    {
+      "chemin": "kenney_nature-kit.zip",
+      "sha256_8": "fa7974a0",
+      "octets": 10537521
+    },
+    {
+      "chemin": "License.txt",
+      "sha256_8": "cb96b75e",
+      "octets": 611
+    }
+  ]
+}

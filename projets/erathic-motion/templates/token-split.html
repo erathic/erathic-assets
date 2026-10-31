@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../lib/charte.css">
+<style>
+  #stage{position:absolute;left:0;top:0;width:1920px;height:1080px;background:var(--bg,#1E1F22);overflow:hidden}
+  .tok{position:absolute;display:flex;align-items:center;justify-content:center;font-weight:800;white-space:pre;line-height:1}
+  .tok .bg{position:absolute;inset:0;background:var(--gris)}
+  .tok .tx{position:relative}
+  .id{position:absolute;text-align:center;font-weight:700;color:var(--filet);letter-spacing:.02em;font-variant-numeric:tabular-nums}
+  .tick{position:absolute;background:var(--filet)}
+  #rail{position:absolute;height:3px;background:var(--filet);opacity:.35}
+</style></head>
+<body>
+<div id="stage"><div id="rail"></div></div>
+<script src="../node_modules/gsap/dist/gsap.min.js"></script>
+<script>
+const CFG = window.CONFIG || {tokens:[{t:'Lib',sp:false,id:3811},{t:'érer',sp:false,id:1394},{t:'sa',sp:true,id:264},{t:'créa',sp:true,id:5071},{t:'tivité',sp:false,id:33218},{t:'avec',sp:true,id:2017},{t:"l'",sp:true,id:75},{t:'IA',sp:false,id:302}],accentIndex:7,fontSize:64};
+const W = window.__W || 1920, H = window.__H || 1080;
+const DUR = 9;
+const FS = CFG.fontSize, PAD = Math.round(FS*0.42), GAP = Math.round(FS*0.3), BH = Math.round(FS*2);
+const NOIR='#1E1F22', LIME='#DBFF00', BLANC='#FFFFFF', FILET='#D9D9D9';
+const stage = document.getElementById('stage');
+stage.style.setProperty('--bg', CFG.bg||NOIR);
+stage.style.width=W+'px'; stage.style.height=H+'px';
+const clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
+const seg=(t,a,b)=>clamp((t-a)/(b-a));
+const ease=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
+
+let tl, els = [];
+function build(){
+  const cv=document.createElement('canvas').getContext('2d');
+  cv.font=`800 ${FS}px Montserrat`;
+  const meas=s=>cv.measureText(s).width;
+  const space=meas(' ');
+  const toks=CFG.tokens.map(k=>({...k,w:meas(k.t)}));
+  // disposition « phrase » (inline)
+  let sx=0; toks.forEach((k,i)=>{ if(i>0&&k.sp) sx+=space; k.ix=sx; sx+=k.w; });
+  const sentW=sx, x0=(W-sentW)/2;
+  // disposition « blocs »
+  const total=toks.reduce((a,k)=>a+k.w+2*PAD,0)+GAP*(toks.length-1);
+  let fx=(W-total)/2; toks.forEach(k=>{ k.fx=fx; k.bw=k.w+2*PAD; fx+=k.bw+GAP; });
+  const cy = H*0.46;                 // ligne centrale
+  const top = cy-BH/2;
+  tl=gsap.timeline({paused:true});
+  toks.forEach((k,i)=>{
+    const d=document.createElement('div'); d.className='tok';
+    d.style.height=BH+'px'; d.style.width=k.bw+'px'; d.style.fontSize=FS+'px'; d.style.top=top+'px';
+    d.innerHTML='<div class="bg"></div><span class="tx"></span>';
+    d.querySelector('.tx').textContent=k.t;
+    const bg=d.querySelector('.bg'), tx=d.querySelector('.tx');
+    stage.appendChild(d);
+    const id=document.createElement('div'); id.className='id';
+    id.style.width=k.bw+'px'; id.style.fontSize=Math.round(FS*0.55)+'px'; id.style.top=(top+BH+36)+'px'; id.style.left=k.fx+'px';
+    stage.appendChild(id);
+    const tick=document.createElement('div'); tick.className='tick';
+    tick.style.cssText=`left:${k.fx+k.bw/2-1.5}px;top:${top+BH+6}px;width:3px;height:22px`;
+    stage.appendChild(tick);
+    els.push({d,bg,tx,id,tick,k});
+    // état initial : texte blanc, sans bloc, au rang « phrase »
+    gsap.set(d,{left:x0+k.ix-PAD, opacity:0});
+    gsap.set(bg,{opacity:0}); gsap.set(tx,{color:BLANC});
+    gsap.set(tick,{scaleY:0,transformOrigin:'50% 0%'}); gsap.set(id,{opacity:0,y:14});
+    const s=0.15*i;
+    // 0.2 - 1.2 : la phrase apparaît (mot à mot)
+    tl.to(d,{opacity:1,duration:0.5,ease:'power2.out'},0.2+0.07*i);
+    // 2.0 - 3.4 : découpage -> blocs
+    tl.to(d,{left:k.fx,duration:1.1,ease:'power3.inOut'},2.0+0.04*i);
+    tl.to(bg,{opacity:1,duration:0.45,ease:'power2.out'},2.0+0.04*i);
+    tl.to(tx,{color:NOIR,duration:0.45,ease:'none'},2.0+0.04*i);
+    // 3.6 - 4.6 : repères et identifiants
+    tl.to(tick,{scaleY:1,duration:0.3,ease:'power2.out'},3.6+0.08*i);
+    tl.to(id,{opacity:1,y:0,duration:0.4,ease:'power2.out'},3.7+0.08*i);
+    // 5.2 - 6.8 : balayage de lecture (un bloc après l'autre en jaune-vert)
+    const a=5.2+0.2*i;
+    tl.set(bg,{backgroundColor:LIME},a);
+    tl.set(bg,{backgroundColor:CFG.accentIndex===i?LIME:'#F1F1F3'},a+0.2);
+    // 8.1 - 8.8 : tout s'efface pour la boucle
+    tl.to([d,id,tick],{opacity:0,duration:0.55,ease:'power2.in'},8.2);
+  });
+  // rail
+  const rail=document.getElementById('rail');
+  rail.style.left=toks[0].fx+'px'; rail.style.width=(total)+'px'; rail.style.top=(top+BH+16)+'px';
+  gsap.set(rail,{opacity:0}); tl.to(rail,{opacity:.35,duration:.4},3.6); tl.to(rail,{opacity:0,duration:.55},8.2);
+  // mise à jour des identifiants (défilement de chiffres avant stabilisation)
+  window.__ids=toks.map((k,i)=>({k,i,a:3.7+0.08*i,b:3.7+0.08*i+0.6}));
+}
+function scramble(n,seed,len){ let s=''; for(let j=0;j<len;j++){ s+= ((seed*31+j*17+n*7)%10); } return s; }
+function render(t){
+  t=((t%DUR)+DUR)%DUR;
+  tl.time(t);
+  window.__ids.forEach(({k,i,a,b})=>{
+    const p=seg(t,a,b), fin=String(k.id);
+    els[i].id.textContent = p>=1 || t<a ? fin : scramble(Math.floor(p*14),i+3,fin.length);
+  });
+}
+window.render=render; window.DUR=DUR;
+window.__ready=document.fonts.load('800 64px Montserrat').then(()=>document.fonts.ready).then(()=>{build();render(0);});
+</script>
+</body></html>

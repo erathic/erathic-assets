@@ -1,0 +1,32 @@
+{
+  "id": "anim.ual2",
+  "nom": "Universal Animation Library 2 Standard",
+  "type": "Animation",
+  "version": 1,
+  "auteur": "Quaternius",
+  "licence": "CC0",
+  "redistribuable": "oui",
+  "famille_squelette": "UE 65 os",
+  "elements": 43,
+  "source": "archive fournie par Eric (version sur place, sans _RM)",
+  "recu_le": "2026-10-31",
+  "notes": "Versions _RM (déplacement de racine) et FBX non conservées ici : à reprendre dans l archive d origine.",
+  "notion": "https://app.notion.com/p/40a28943c49d810093ccf0a35e97d67f",
+  "fichiers": [
+    {
+      "chemin": "UAL2_Standard.glb",
+      "sha256_8": "8cee20ab",
+      "octets": 8091444
+    },
+    {
+      "chemin": "README.txt",
+      "sha256_8": "ccd02718",
+      "octets": 702
+    },
+    {
+      "chemin": "License.txt",
+      "sha256_8": "6d01f55c",
+      "octets": 332
+    }
+  ]
+}

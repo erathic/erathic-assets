@@ -1,0 +1,1 @@
+Source de la scène « île Erathic » (Three.js). Les modèles Kenney utilisés sont embarqués en base64 dans `src_assets.json`. Build : voir `build.sh` (nécessite `bundle.js` produit par esbuild, voir le jeu de référence pour la procédure).

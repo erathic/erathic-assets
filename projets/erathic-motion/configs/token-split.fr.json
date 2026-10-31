@@ -1,0 +1,15 @@
+{
+  "bg": "#1E1F22",
+  "fontSize": 72,
+  "tokens": [
+    { "t": "Lib",    "sp": false, "id": 3811 },
+    { "t": "érer",   "sp": false, "id": 1394 },
+    { "t": "sa",     "sp": true,  "id": 264 },
+    { "t": "créa",   "sp": true,  "id": 5071 },
+    { "t": "tivité", "sp": false, "id": 33218 },
+    { "t": "avec",   "sp": true,  "id": 2017 },
+    { "t": "l'",     "sp": true,  "id": 75 },
+    { "t": "IA",     "sp": false, "id": 302 }
+  ],
+  "accentIndex": 7
+}

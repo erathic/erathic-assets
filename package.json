@@ -1,0 +1,14 @@
+{
+  "name": "erathic-projets",
+  "private": true,
+  "version": "1.0.0",
+  "description": "D\u00e9pendances communes aux projets Three.js (jeu, \u00eele, outils)",
+  "dependencies": {
+    "cannon-es": "^0.20.0",
+    "esbuild": "^0.28.2",
+    "three": "^0.187.0"
+  },
+  "devDependencies": {
+    "playwright": "*"
+  }
+}

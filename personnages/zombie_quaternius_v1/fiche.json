@@ -1,0 +1,27 @@
+{
+  "id": "char.zombie_quaternius",
+  "nom": "Zombie Quaternius",
+  "type": "Personnage",
+  "version": 1,
+  "auteur": "Quaternius (indiqué dans le titre du dossier Drive d origine)",
+  "licence": "Inconnue",
+  "redistribuable": "à vérifier",
+  "famille_squelette": "Mixamo 47 os",
+  "elements": 5,
+  "source": "archive FBX fournie par Eric, dossier Drive partagé « Zombie by @Quaternius » ; licence absente de l archive",
+  "recu_le": "2026-10-31",
+  "notes": "Texture absente : le modèle s affiche en blanc. Clips : Idle, Walk, Run, Bite, Crawl.",
+  "notion": "https://app.notion.com/p/40a28943c49d8173bb3fc5f1562949dc",
+  "fichiers": [
+    {
+      "chemin": "Zombie.fbx",
+      "sha256_8": "203d76f2",
+      "octets": 1573820
+    },
+    {
+      "chemin": "ZombieSmooth.fbx",
+      "sha256_8": "729b230e",
+      "octets": 1568892
+    }
+  ]
+}

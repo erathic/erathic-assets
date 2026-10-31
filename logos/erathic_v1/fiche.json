@@ -1,0 +1,51 @@
+{
+  "id": "logo.erathic",
+  "nom": "Logos Erathic",
+  "type": "Logo",
+  "version": 1,
+  "auteur": "Erathic Studio",
+  "licence": "Propriétaire Erathic",
+  "redistribuable": "oui",
+  "elements": 5,
+  "source": "ERATHIC-LOGOS.pdf fourni par Eric ; SVG extraits lors du projet de clips animés",
+  "recu_le": "2026-10-31",
+  "notes": "items.json : couches du pictogramme (utilisées par l extrusion 3D du logo de l île).",
+  "notion": "https://app.notion.com/p/40a28943c49d813e8422fd45e8c535bc",
+  "fichiers": [
+    {
+      "chemin": "ERATHIC-LOGOS.pdf",
+      "sha256_8": "94b22f12",
+      "octets": 454314
+    },
+    {
+      "chemin": "erathic-logo-horizontal.svg",
+      "sha256_8": "7b08a5b2",
+      "octets": 87242
+    },
+    {
+      "chemin": "erathic-logo-vertical-v1.svg",
+      "sha256_8": "8d478745",
+      "octets": 87598
+    },
+    {
+      "chemin": "erathic-logotype-cadre.svg",
+      "sha256_8": "5e953c7b",
+      "octets": 67331
+    },
+    {
+      "chemin": "erathic-logotype-seul.svg",
+      "sha256_8": "209d9b26",
+      "octets": 64057
+    },
+    {
+      "chemin": "erathic-picto.svg",
+      "sha256_8": "b3ff2cbe",
+      "octets": 19835
+    },
+    {
+      "chemin": "items.json",
+      "sha256_8": "576f5e54",
+      "octets": 18100
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "id": "char.bot",
+  "nom": "Robot Character-bot",
+  "type": "Personnage",
+  "version": 1,
+  "auteur": "inconnu",
+  "licence": "Inconnue",
+  "redistribuable": "à vérifier",
+  "famille_squelette": "Robot 25 os",
+  "elements": 22,
+  "source": "GLB fourni par Eric",
+  "recu_le": "2026-10-31",
+  "notes": "22 animations intégrées ; os IK FootL/FootR/PTL/PTR ; épée sur l os Weapon.",
+  "notion": "https://app.notion.com/p/40a28943c49d811588b0cff562c67efd",
+  "fichiers": [
+    {
+      "chemin": "Character-bot.glb",
+      "sha256_8": "cefe2ff8",
+      "octets": 1241016
+    }
+  ]
+}

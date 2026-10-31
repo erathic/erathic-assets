@@ -1,0 +1,43 @@
+{
+  "id": "anim.derived.bot_clips",
+  "nom": "Clips convertis pour le robot",
+  "type": "Animation",
+  "nature": "Conversion",
+  "version": 1,
+  "derive_de": [
+    "anim.ual1",
+    "anim.frank_2handed",
+    "char.bot"
+  ],
+  "auteur": "dérivé",
+  "licence": "Inconnue",
+  "redistribuable": "à vérifier",
+  "famille_squelette": "Robot 25 os",
+  "elements": 10,
+  "source": "module de retarget (outils/retarget) : UAL1 (Jump_Start, Jump_Loop, Jump_Land, Sword_Attack) et Frank RPG 2Handed (Combo01_1 à 4, Hit01, Death01)",
+  "recu_le": "2026-10-31",
+  "notes": "Les fichiers recette_*.json sont les configurations du retarget (exemples). Les FBX de Frank ne sont pas conservés : dépôt GitHub public codenameglassy/Unity_FreeflowCombat.",
+  "notion": "https://app.notion.com/p/40a28943c49d8101988bc1b4a4565f2e",
+  "fichiers": [
+    {
+      "chemin": "frank_clips.json",
+      "sha256_8": "79f8a173",
+      "octets": 235109
+    },
+    {
+      "chemin": "jumps.json",
+      "sha256_8": "70bc127b",
+      "octets": 183061
+    },
+    {
+      "chemin": "recette_frank.json",
+      "sha256_8": "536e4c2d",
+      "octets": 170
+    },
+    {
+      "chemin": "recette_ual1.json",
+      "sha256_8": "2b21ea47",
+      "octets": 159
+    }
+  ]
+}

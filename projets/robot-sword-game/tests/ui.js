@@ -1,0 +1,21 @@
+const {chromium}=require('playwright');
+(async()=>{
+ const b=await chromium.launch({args:['--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist']});
+ const p=await b.newPage({viewport:{width:844,height:390},hasTouch:true});
+ const errs=[]; p.on('pageerror',e=>errs.push(e.message));
+ await p.goto('file://'+process.cwd()+'/index.html'); await p.waitForFunction('window.__game&&window.__game.ready()',{timeout:60000}); await p.waitForTimeout(800);
+ const G=()=>p.evaluate(()=>({pos:window.__game.pos().map(x=>+x.toFixed(2)),st:window.__game.S.state,cur:window.__game.S.cur}));
+ const r=await p.locator('#stick').boundingBox(); const cx=r.x+r.width/2, cy=r.y+r.height/2;
+ console.log('start',JSON.stringify(await G()));
+ await p.mouse.move(cx,cy); await p.mouse.down(); await p.mouse.move(cx+50,cy,{steps:3}); await p.waitForTimeout(1500);
+ console.log('stick droite',JSON.stringify(await G()));
+ await p.mouse.move(cx,cy+50,{steps:3}); await p.waitForTimeout(1500); console.log('stick bas',JSON.stringify(await G()));
+ await p.mouse.up(); await p.waitForTimeout(300);
+ const a=await p.locator('#bAtk').boundingBox(); await p.mouse.click(a.x+50,a.y+50); await p.waitForTimeout(250); console.log('coup',JSON.stringify(await G()));
+ await p.waitForTimeout(1500);
+ const j=await p.locator('#bJmp').boundingBox(); await p.mouse.click(j.x+50,j.y+50); await p.waitForTimeout(200); console.log('saut',JSON.stringify(await G()));
+ await p.waitForTimeout(1800); console.log('retour',JSON.stringify(await G()));
+ await p.keyboard.down('d'); await p.waitForTimeout(600); await p.keyboard.up('d'); console.log('clavier d',JSON.stringify(await G()));
+ await p.screenshot({path:'/tmp/ui_land.png'});
+ console.log(errs.join('|')||'no errors'); await b.close();
+})();

@@ -1,0 +1,16 @@
+{
+  "name": "erathic-motion",
+  "version": "1.0.0",
+  "description": "",
+  "main": "render.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@fontsource/montserrat": "^5.3.0",
+    "gsap": "^3.15.0"
+  }
+}
