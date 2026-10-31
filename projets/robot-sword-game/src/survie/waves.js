@@ -18,7 +18,7 @@ export function createWaves(ctx, { superMat }) {
     return { x, z };
   }
   function spawnNormal() { const p = spawnPoint(); ctx.zombies.spawn(p.x, p.z, 0, { hp: ZHP + Math.floor((Math.max(1, st.wave) - 1) / WAVES.hpEvery), speedMul: waveMul(), kind: 'normal' }); }
-  function spawnSuper() { const p = spawnPoint(5); ctx.zombies.spawn(p.x, p.z, 0, { hp: SUPER.hp, scale: SUPER.scale, speedMul: SUPER.speedMul * waveMul(), material: superMat, kind: 'super' }); ctx.ui.banner('SUPER ZOMBIE', 1.8); }
+  function spawnSuper() { const p = spawnPoint(5); ctx.zombies.spawn(p.x, p.z, 0, { hp: SUPER.hp + SUPER.hpAdd * S.supers, scale: SUPER.scale, speedMul: SUPER.speedMul * waveMul(), material: superMat, kind: 'super' }); ctx.ui.banner('SUPER ZOMBIE', 1.8); }
   function onSuperKilled(z) {
     const p = { x: z.g.position.x, z: z.g.position.z }; ctx.colliders.constrain(p, 0.6);
     const id = DROP_ORDER[st.dropIdx]; st.dropIdx++;

@@ -25,8 +25,8 @@ canvas{display:block;width:100%;height:100%;touch-action:none}
 #hint{position:absolute;left:18px;bottom:14px;color:#D9D9D9;font-size:12px;font-weight:600;letter-spacing:.04em;opacity:.8;line-height:1.5}
 #hint b{color:#DBFF00;font-weight:700}
 @media (pointer:coarse){#hint{display:none}}
-#hud{position:absolute;top:14px;left:50%;transform:translateX(-50%);display:flex;gap:18px;align-items:center;padding:8px 14px;background:#1E1F22;border:2px solid #DBFF00;color:#DBFF00;font-weight:800;font-size:13px;letter-spacing:.1em;white-space:pre}
-#hp{display:flex;gap:5px}#hp i{display:block;width:14px;height:14px;background:#DBFF00}#hp i.off{background:none;border:2px solid #DBFF00;box-sizing:border-box}
+#hud{position:absolute;top:14px;left:50%;transform:translateX(-50%);width:max-content;display:flex;gap:18px;align-items:center;flex-wrap:wrap;justify-content:center;max-width:calc(100vw - 20px);padding:8px 14px;background:#1E1F22;border:2px solid #DBFF00;color:#DBFF00;font-weight:800;font-size:13px;letter-spacing:.1em;white-space:pre}
+#hp{display:flex;gap:3px}#hp i{display:block;width:10px;height:14px;background:#DBFF00}#hp i.off{background:none;border:2px solid #DBFF00;box-sizing:border-box}
 #end{position:fixed;inset:0;z-index:5;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:rgba(30,31,34,.84);pointer-events:auto}
 #endT{color:#DBFF00;font-weight:800;font-size:46px;letter-spacing:.12em}#endS{color:#D9D9D9;font-size:14px;font-weight:600;letter-spacing:.06em;white-space:pre}
 #endB{color:#DBFF00;font-size:12px;font-weight:700;letter-spacing:.08em;min-height:1.2em}
@@ -37,7 +37,7 @@ canvas{display:block;width:100%;height:100%;touch-action:none}
 <div id="ui">
   <div id="hud"><div id="hp"></div><div id="cnt"></div></div>
   <div id="wpn"></div><div id="banner"></div>
-  <div id="hint"><b>ZQSD / flèches</b> déplacer · <b>Espace</b> saut · <b>J</b> coup ou tir (maintenir pour tirer en continu)</div>
+  <div id="hint"><b>ZQSD / flèches</b> déplacer · <b>Espace</b> saut · <b>J</b> coup ou tir (maintenir pour tirer en continu) · <b>glisser</b> tourner la caméra · <b>molette</b> ou <b>pincer</b> zoom · <b>double-clic</b> recentrer</div>
   <div id="stick"><div class="base oct"></div><div class="knob oct"></div></div>
   <div class="btn a oct" id="bAtk"><span>COUP</span></div>
   <div class="btn b oct" id="bJmp"><span>SAUT</span></div>

@@ -12,7 +12,7 @@ const { chromium } = require('playwright'); const path = require('path');
   const killReady = () => E(() => { const g = window.__game; g.zombies.slice().forEach(z => { if (!z.dead && z.state !== 'spawn' && z.kind === 'normal') g.combat.damageZombie(z, 999, new g.THREE.Vector3(1, 0, 0)); }); });   // les supers sont épargnés
   try {
   await fresh();
-  ok('départ : mains nues, 7 points de vie', await E(() => window.__game.S.weapon === 'fists' && window.__game.S.hp === 7 && window.__game.S.supers === 0));
+  ok('départ : mains nues, 14 points de vie', await E(() => window.__game.S.weapon === 'fists' && window.__game.S.hp === 14 && window.__game.S.supers === 0));
 
   // ---- vagues ----
   await E(() => window.__game.step(70)); ok('vague 1 annoncée après 2 s', await E(() => window.__game.waves.wave === 1));
@@ -26,7 +26,7 @@ const { chromium } = require('playwright'); const path = require('path');
   await E(() => window.__game.step(3));
   const sup = await E(() => { const g = window.__game, z = g.zombies.find(z => z.kind === 'super'), n = g.zombies.find(z => z.kind === 'normal'); return z ? { base: z.base, hp: z.hp, speed: z.speed, normal: n ? n.speed : null, kills: g.S.kills, shader: !!z.mat.userData.U, sameMatAsNormal: n ? n.mat === z.mat : null } : null; });
   console.log('super', JSON.stringify(sup)); ok('un super zombie apparaît au 10e zombie tué', sup && sup.kills >= 10 && sup.kills < 14);
-  ok('super : 1,25x plus grand, 16 PV, shader jaune', sup && sup.base === 1.25 && sup.hp === 16 && sup.shader === true && sup.sameMatAsNormal === false);
+  ok('super : 1,25x plus grand, 8 PV pour le premier, shader jaune', sup && sup.base === 1.25 && sup.hp === 8 && sup.shader === true && sup.sameMatAsNormal === false);
 
   // ---- drops dans l'ordre fixe ----
   const order = []; const supers0 = await E(() => window.__game.S.supers);
@@ -38,7 +38,7 @@ const { chromium } = require('playwright'); const path = require('path');
   }
   console.log('ordre des drops', order.join(', '));
   ok('drops dans l\'ordre : épée, épée 2 mains, pistolet, mitrailleuse, canon laser, puis soin', JSON.stringify(order) === JSON.stringify(['sword1', 'sword2', 'pistol', 'mg', 'laser', 'heal']));
-  ok('arme ramassée équipée', await E(() => window.__game.S.weapon === 'laser')); ok('soin plafonné à 7', await E(() => window.__game.S.hp <= 7));
+  ok('arme ramassée équipée', await E(() => window.__game.S.weapon === 'laser')); ok('soin plafonné à 14', await E(() => window.__game.S.hp <= 14));
 
   // ---- armes : dégâts réels sur des zombies immobiles ----
   await E(() => { const c = window.__game.colliders; window.__bk = { circles: c.circles.slice(), segments: c.segments.slice() }; c.circles.length = 0; c.segments.length = 0; });   // terrain dégagé pour mesurer les dégâts
@@ -57,10 +57,10 @@ const { chromium } = require('playwright'); const path = require('path');
 
   // ---- collisions : logo central et bord de l'île ----
   await E(() => { const c = window.__game.colliders; window.__bk.circles.forEach(x => c.circles.push(x)); window.__bk.segments.forEach(x => c.segments.push(x)); });
-  const col = await E(() => { const g = window.__game, c = g.colliders, s = c.segments[0], p = { x: 0.1, z: 0.1 }; c.constrain(p, 0.45); const out = []; for (const q of [{ x: 0, z: 0 }, { x: 9, z: 0 }, { x: 0, z: -9 }]) { c.constrain(q, 0.45); out.push(Math.hypot(q.x, q.z)); } return { pushed: Math.hypot(p.x, p.z), border: out.slice(1), circles: c.circles.length, segR: s.r }; });
-  ok('le logo est un obstacle solide', col.pushed > 0.4); ok('le robot reste dans l\'île', col.border.every(d => d <= 5.5 - 0.45 + 1e-6));
-  const walk = await E(() => { const g = window.__game; g.step(2); Object.assign(g.S, { state: 'ground', over: false, inv: 1e9 }); g.player.position.set(0.8, 0, 3.0); let min = 9; const s = g.colliders.segments[0];
-    for (let i = 0; i < 90; i++) { g.stick.x = -0.7; g.stick.y = -0.7; g.step(1); const p = g.player.position, ex = s.bx - s.ax, ez = s.bz - s.az; let t = ((p.x - s.ax) * ex + (p.z - s.az) * ez) / (ex * ex + ez * ez); t = Math.max(0, Math.min(1, t)); min = Math.min(min, Math.hypot(p.x - (s.ax + ex * t), p.z - (s.az + ez * t))); } g.stick.x = g.stick.y = 0; return { min, r: s.r }; });
+  const col = await E(() => { const g = window.__game, c = g.colliders, s = c.segments[0], cx = (s.ax + s.bx) / 2, cz = (s.az + s.bz) / 2, p = { x: cx + 0.05, z: cz + 0.05 }; c.constrain(p, 0.45); const out = []; for (const q of [{ x: 0, z: 0 }, { x: 9, z: 0 }, { x: 0, z: -9 }]) { c.constrain(q, 0.45); out.push(Math.hypot(q.x, q.z)); } return { pushed: Math.hypot(p.x - cx, p.z - cz), cx, cz, border: out.slice(1), circles: c.circles.length, segR: s.r }; });
+  ok('le logo est un obstacle solide', col.pushed > 0.4); ok('le logo est au fond de l\'île (côté opposé à la caméra)', col.cx < -1.5 && col.cz < -1.5); ok('le robot reste dans l\'île', col.border.every(d => d <= 5.5 - 0.45 + 1e-6));
+  const walk = await E(() => { const g = window.__game; g.step(2); Object.assign(g.S, { state: 'ground', over: false, inv: 1e9 }); const s = g.colliders.segments[0], cx = (s.ax + s.bx) / 2, cz = (s.az + s.bz) / 2; g.player.position.set(cx + 2.4, 0, cz + 2.4); let min = 9;
+    for (let i = 0; i < 90; i++) { g.stick.x = 0; g.stick.y = -1; g.step(1); const p = g.player.position, ex = s.bx - s.ax, ez = s.bz - s.az; let t = ((p.x - s.ax) * ex + (p.z - s.az) * ez) / (ex * ex + ez * ez); t = Math.max(0, Math.min(1, t)); min = Math.min(min, Math.hypot(p.x - (s.ax + ex * t), p.z - (s.az + ez * t))); } g.stick.x = g.stick.y = 0; return { min, r: s.r }; });
   ok('marcher vers le logo : pas de traversée', walk.min >= walk.r + 0.4);
 
   // ---- points de vie, fin de partie, rejouer ----
@@ -69,7 +69,27 @@ const { chromium } = require('playwright'); const path = require('path');
   await E(() => window.__game.step(170)); ok('0 point de vie : fin de partie', await E(() => window.__game.S.over === true && document.getElementById('end').style.display === 'flex'));
   ok('l\'écran de fin affiche vague, éliminés, temps', (await p.textContent('#endS')).includes('VAGUE'));
   ok('meilleur score affiché (record ou meilleur)', /RECORD|MEILLEUR/.test(await p.textContent('#endB')));
-  await E(() => document.getElementById('bRe').dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }))); await E(() => window.__game.step(2)); ok('rejouer : 7 PV, mains nues, partie remise à zéro', await E(() => { const g = window.__game; return g.S.hp === 7 && g.S.weapon === 'fists' && g.S.kills === 0 && g.waves.wave === 0 && g.alive() === 0; }));
+  await E(() => document.getElementById('bRe').dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }))); await E(() => window.__game.step(2)); ok('rejouer : 14 PV, mains nues, partie remise à zéro', await E(() => { const g = window.__game; return g.S.hp === 14 && g.S.weapon === 'fists' && g.S.kills === 0 && g.waves.wave === 0 && g.alive() === 0; }));
+
+  // ---- bug corrigé : après une mort, le robot reprend ses animations ----
+  await E(() => window.__game.step(12));
+  const anim = await E(() => { const a = window.__game.pl.acts; return { death: a.death.isScheduled(), idle: a.i_fists.isRunning(), w: a.i_fists.getEffectiveWeight(), cur: window.__game.S.cur }; });   // isScheduled : le clip est encore actif dans le mélangeur (un clip de mort figé mais actif se mélange au repos)
+  ok('après rejouer : le clip de mort n\'est plus actif, le repos joue à plein poids', anim.death === false && anim.idle === true && anim.w > 0.95);
+
+  // ---- PV du super zombie suivant ----
+  const sup2 = await E(() => { const g = window.__game; g.S.supers = 2; g.wavesApi.spawnSuper(); const z = g.zombies[g.zombies.length - 1]; g.S.supers = 0; return { kind: z.kind, hp: z.hp }; });
+  ok('le super zombie suivant a 3 PV de plus par super déjà tué (8, 11, 14...)', sup2.kind === 'super' && sup2.hp === 14);
+
+  // ---- caméra : zoom, rotation, base de déplacement, recentrage ----
+  await fresh(); await E(() => { window.__game.waves.state = 'pause'; window.__game.waves.pauseT = 1e9; });
+  await p.mouse.move(500, 300); await p.mouse.wheel(0, -500); await E(() => window.__game.step(1)); ok('molette : zoom avant', await E(() => window.__game.camCtl.zoom > 1.3 && window.__game.cam.zoom > 1.3));
+  await p.mouse.wheel(0, 1500); ok('molette : zoom arrière, borné', await E(() => window.__game.camCtl.zoom >= 0.55 && window.__game.camCtl.zoom < 0.9));
+  const y0 = await E(() => window.__game.camCtl.yaw); await p.mouse.move(500, 300); await p.mouse.down(); await p.mouse.move(620, 300, { steps: 4 }); await p.mouse.up();
+  ok('glisser : la caméra tourne', await E(y => Math.abs(window.__game.camCtl.yaw - y) > 0.3, y0));
+  const dirOk = await E(() => { const g = window.__game, c = g.camCtl; c.set({ yaw: Math.PI / 2 }); Object.assign(g.S, { state: 'ground', over: false, inv: 1e9 }); g.player.position.set(1, 0, 1); g.stick.x = 0; g.stick.y = -1; g.step(20); g.stick.y = 0; const q = g.player.position; return { dx: q.x - 1, dz: q.z - 1 }; });
+  ok('le joystick suit l\'angle de la caméra (haut = vers l\'avant de la vue)', dirOk.dx < -1 && Math.abs(dirOk.dz) < 0.3);
+  await E(() => document.getElementById('app').dispatchEvent(new MouseEvent('dblclick', { bubbles: true })));
+  ok('double-clic : recentre (angle, inclinaison, zoom)', await E(() => { const c = window.__game.camCtl; return c.zoom === 1 && Math.abs(c.yaw - Math.PI / 4) < 1e-9; }));
   } catch (e) { errs.push('EXCEPTION ' + String(e.message).split('\n')[0]); }
   console.log(JSON.stringify(checks, null, 1)); console.log(errs.join('\n') || 'no errors'); await b.close(); if (!Object.values(checks).every(Boolean) || errs.length) process.exitCode = 1;
 })();

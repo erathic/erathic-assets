@@ -63,6 +63,7 @@ export function createPlayer(ctx, { onReady, onError, anims = ANIMS, initial = '
     const next = pl.acts[key], prev = pl.acts[S.cur];
     const tr = resolveTransition(S.cur, key); const fade = fadeOverride ?? tr.fade;
     next.timeScale = pl.baseTs[key];                 // un warp précédent peut avoir modifié la vitesse : on la rétablit
+    if (!prev) pl.mixer.stopAllAction();             // départ ou nouvelle partie : plus aucun clip ne doit rester actif (le clip de mort figé se mélangeait au repos)
     next.reset().play(); if (prev) next.crossFadeFrom(prev, fade, tr.sync);
     pl.last = { from:S.cur, to:key, fade, sync:tr.sync }; S.cur = key;
   }

@@ -64,7 +64,7 @@ Fonctions : choix de l'objet ou dépôt d'un fichier (glisser-déposer) ; invent
 
 Troisième point d'entrée (`src/survie/`, `survie.src.html`), construit par `bash build.sh survie` (produit `index.survie.html`). Il réutilise le socle du jeu (scène, robot, zombies, sang, ombres instanciées, entrées) et la scène de `projets/ile-erathic` (logo extrudé, cocotiers et rochers Kenney, shaders Erathic).
 
-**Règles.** Le robot a 7 points de vie (une morsure en retire 1). Des vagues de zombies de plus en plus nombreuses (6, puis +3 par vague, 45 au plus, 26 vivants en même temps), un peu plus rapides et plus résistants au fil du temps. Tous les 10 zombies éliminés, un super zombie apparaît (shader jaune, 1,25 fois plus grand, 1,3 fois plus rapide, 16 points de vie) ; en mourant il lâche l'arme suivante, dans l'ordre : épée, épée à deux mains, pistolet, mitrailleuse, canon laser, puis des soins (+2). On part les mains nues ; une arme ramassée remplace la précédente. But : survivre le plus longtemps (vague, éliminés, temps ; meilleur score gardé dans le navigateur).
+**Règles.** Le robot a 14 points de vie (une morsure en retire 1). Des vagues de zombies de plus en plus nombreuses (6, puis +3 par vague, 45 au plus, 26 vivants en même temps), un peu plus rapides et plus résistants au fil du temps. Tous les 10 zombies éliminés, un super zombie apparaît (shader jaune, 1,25 fois plus grand, 1,3 fois plus rapide, 8 points de vie pour le premier puis 3 de plus par super zombie déjà tué) ; en mourant il lâche l'arme suivante, dans l'ordre : épée, épée à deux mains, pistolet, mitrailleuse, canon laser, puis des soins (+4). On part les mains nues ; une arme ramassée remplace la précédente. But : survivre le plus longtemps (vague, éliminés, temps ; meilleur score gardé dans le navigateur).
 
 | Module | Rôle |
 | --- | --- |
@@ -75,6 +75,6 @@ Troisième point d'entrée (`src/survie/`, `survie.src.html`), construit par `ba
 | `waves.js`, `pickups.js` | vagues, super zombies, objets à ramasser |
 | `ui.js`, `fx.js`, `main.js` | interface (vie, vague, arme, bannières, fin, record), habillage, assemblage |
 
-Armes (dégâts par coup) : mains nues 1 à 2, épée 2 puis 3, épée à deux mains 3, 3, 4 puis 6 (arc large), pistolet 2 (1 tir toutes les 0,38 s), mitrailleuse 1 (9 tirs par seconde, léger écart), canon laser 6 à chaque zombie sur la ligne (1 tir toutes les 1,1 s). Le tir à distance vise le zombie le plus proche ; tenir le bouton « COUP » (ou J) pour tirer en continu.
+Armes (dégâts par coup) : mains nues 1 à 2, épée 2 puis 3, épée à deux mains 3, 3, 4 puis 6 (arc large), pistolet 2 (1 tir toutes les 0,38 s), mitrailleuse 1 (9 tirs par seconde, léger écart), canon laser 6 à chaque zombie sur la ligne (1 tir toutes les 1,1 s). Le logo est au fond de l'île (côté opposé à la caméra) pour ne pas masquer l'action. La caméra se règle en jeu : glisser pour la tourner et l'incliner, molette ou pincer pour le zoom, double-clic pour recentrer (le joystick suit l'angle de la caméra). Le tir à distance vise le zombie le plus proche ; tenir le bouton « COUP » (ou J) pour tirer en continu.
 
 Mesures du 2026-10-31 (sans GPU) : vague 1, environ 2,5 ms de logique par image, 123 appels de rendu dont une centaine pour l'île elle-même (décor statique à fusionner si besoin sur téléphone).

@@ -1,13 +1,13 @@
 // Niveau de survie « Île Erathic » : arène, vagues, super zombies, armes. Données seules.
 import { C } from '../config.js';
 
-export const ARENA = { k: 2, playR: 5.5, view: 5.2, logoH: 4.2 };    // k = agrandissement de l'île par rapport à la scène de démonstration
-export const HP_MAX = 7;                                              // 7 points de vie (un par morsure)
+export const ARENA = { k: 2, playR: 5.5, view: 5.2, logoH: 4.2, logoPos: [-2.6, -2.6] };   // logoPos : le logo est au fond de l'île (côté opposé à la caméra), pour ne pas masquer l'action    // k = agrandissement de l'île par rapport à la scène de démonstration
+export const HP_MAX = 14;                                             // 14 points de vie (une morsure en retire 1)
 export const WAVES = { cap: 26, first: 6, add: 3, maxPerWave: 45, spawnEvery: 0.5, pause: 3, speedPerWave: 0.03, speedMaxMul: 1.6, hpEvery: 4 };
 export const ZHP = 2;                                                 // points de vie d'un zombie normal (+1 toutes les WAVES.hpEvery vagues)
-export const SUPER = { every: 10, hp: 16, scale: 1.25, speedMul: 1.3, color: C.lime };   // un super zombie tous les 10 zombies tués
+export const SUPER = { every: 10, hp: 8, hpAdd: 3, scale: 1.25, speedMul: 1.3, color: C.lime };   // un super zombie tous les 10 zombies tués
 export const DROP_ORDER = ['sword1', 'sword2', 'pistol', 'mg', 'laser'];   // puis des soins
-export const HEAL = 2;
+export const HEAL = 4;
 
 // animations du robot : [clé, nom du clip, boucle, vitesse]
 export const ANIMS_S = {

@@ -25,7 +25,7 @@ import { createUI } from './ui.js';
 const ctx = {};
 const S = ctx.S = createState(); Object.assign(S, { weapon: 'fists', fireCd: 0, fireT: 0, fireReq: false, supers: 0, wave: 0, time: 0, hp: HP_MAX });
 ctx.perf = createPerf();
-ctx.stage = createStage(document.getElementById('app'), { view: ARENA.view });
+ctx.stage = createStage(document.getElementById('app'), { view: ARENA.view, orbit: true });
 ctx.level = createLevel(ctx.stage.scene);
 ctx.colliders = createColliders({ circles: ctx.level.circles, segments: ctx.level.segments, playR: ARENA.playR });
 ctx.world = createFx(ctx.stage.scene);
@@ -72,4 +72,4 @@ ctx.stage.renderer.setAnimationLoop(() => { const n = performance.now(); const d
 window.__game = { S, stick: ctx.input.stick, zombies: ctx.zombies.list, gore: ctx.gore, waves: ctx.waves.st, pickups: ctx.pickups.list, wavesApi: ctx.waves, combat: ctx.combat, colliders: ctx.colliders, level: ctx.level,
   restart: init, equip, seed, step: (n, dt = 1 / 30) => { frozen = true; for (let i = 0; i < n; i++) step(dt); ctx.stage.render(); },
   jump: () => { S.jump = true; }, atk: () => { S.atk = true; }, pos: () => ctx.pl.group.position.toArray(), ready: () => ctx.pl.ready && levelReady, player: ctx.pl.group, pl: ctx.pl, THREE,
-  spawnAt: (x, z, extra = {}) => ctx.zombies.spawn(x, z, 0, extra), keys: ctx.input.keys, alive: ctx.zombies.alive, hud: ctx.ui.hud, renderer: ctx.stage.renderer, cam: ctx.stage.cam };
+  spawnAt: (x, z, extra = {}) => ctx.zombies.spawn(x, z, 0, extra), keys: ctx.input.keys, alive: ctx.zombies.alive, hud: ctx.ui.hud, renderer: ctx.stage.renderer, cam: ctx.stage.cam, camCtl: ctx.stage.camCtl };

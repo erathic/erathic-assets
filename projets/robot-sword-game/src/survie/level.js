@@ -62,12 +62,12 @@ export function createLevel(scene) {
   const darkMat = () => fresnelMaterial(C.anthra, '#7C7D87', { power: 2.0, strength: 0.7, low: 0.85, high: 1.15 });
   const logo = createExtrudedLogo(LOGO, { height: ARENA.logoH, gid: 1, materialFor: role => role === 'dark' ? darkMat() : role === 'lime' ? mat(C.lime, true) : mat(C.gris) });
   const lb = new THREE.Box3().setFromObject(logo), lsize = lb.getSize(new THREE.Vector3());      // avant rotation : largeur en x, épaisseur en z
-  logo.position.set(0, 0.06 + logo.userData.eyeToBottom - 0.08 * k, 0); logo.rotation.y = Math.PI / 4; island.add(logo); island.updateMatrixWorld(true);
+  const [LX, LZ] = ARENA.logoPos; logo.position.set(LX, 0.06 + logo.userData.eyeToBottom - 0.08 * k, LZ); logo.rotation.y = Math.PI / 4; island.add(logo); island.updateMatrixWorld(true);
   { const inv = new THREE.Matrix4().copy(island.matrixWorld).invert(); logo.traverse(n => { if (n.isMesh && n.userData.role === 'lime') partGradient(n, inv); });
     const bb = new THREE.Box3().setFromObject(logo); logo.traverse(n => { if (n.isMesh && n.material.userData.U) { n.material.userData.U.uYMin.value = bb.min.y - island.position.y; n.material.userData.U.uYMax.value = bb.max.y - island.position.y; } }); }
   { const half = lsize.x * 0.5 * 0.85, ux = Math.cos(Math.PI / 4), uz = -Math.sin(Math.PI / 4);                  // direction de la largeur du logo après rotation de 45° autour de y
-    segments.push({ ax: -ux * half, az: -uz * half, bx: ux * half, bz: uz * half, r: Math.max(0.35, lsize.z * 0.5 + 0.12) });
-    const m = new THREE.Mesh(blobGeo, new THREE.MeshBasicMaterial({ map: blobTex, color: 0x000000, transparent: true, opacity: 0.5, depthWrite: false })); m.scale.set(lsize.x * 1.9, 1, 1.8); m.rotation.y = Math.PI / 4; m.position.set(0, 0.064, 0); m.renderOrder = 1; island.add(m); }
+    segments.push({ ax: LX - ux * half, az: LZ - uz * half, bx: LX + ux * half, bz: LZ + uz * half, r: Math.max(0.35, lsize.z * 0.5 + 0.12) });
+    const m = new THREE.Mesh(blobGeo, new THREE.MeshBasicMaterial({ map: blobTex, color: 0x000000, transparent: true, opacity: 0.5, depthWrite: false })); m.scale.set(lsize.x * 1.9, 1, 1.8); m.rotation.y = Math.PI / 4; m.position.set(LX, 0.064, LZ); m.renderOrder = 1; island.add(m); }
 
   // cocotiers en couronne, rochers et souches dans les intervalles, quelques abris plus près du centre
   const S = 1.5;       // les objets sont plus grands que sur la petite île : l'arène est plus vaste
@@ -75,7 +75,7 @@ export function createLevel(scene) {
    ['tree_palmTall', 200, 2.55, 0.8], ['tree_palmBend', 245, 2.4, 0.9], ['tree_palmShort', 290, 2.45, 0.85], ['tree_palmDetailedTall', 335, 2.5, 0.9]
   ].forEach(([n, deg, r, s], i) => { const [x, z] = POL(r * k, deg); place(n, x, z, s * S, i * 0.8 + 0.4, { swayOn: true, r: 0.38 }); });
   [['rock_largeA', 42, 2.4, 1.1, 0.8, 0.95], ['plant_bush', 87, 2.3, 1.2, 0.3, 0], ['log', 132, 2.35, 1.1, 1.2, 0.55], ['rock_smallC', 177, 2.35, 1.1, 2.0, 0.5],
-   ['plant_bush', 222, 2.3, 1.1, 1.5, 0], ['plant_bush', 312, 2.2, 1.0, 0.7, 0], ['rock_smallC', 357, 2.4, 1.0, 0.4, 0.5]
+   ['plant_bush', 312, 2.2, 1.0, 0.7, 0], ['rock_smallC', 357, 2.4, 1.0, 0.4, 0.5]
   ].forEach(([n, deg, r, s, ry, cr]) => { const [x, z] = POL(r * k, deg); place(n, x, z, s * S, ry, { r: cr }); });
   [['rock_smallC', 30, 1.55, 0.9, 0.9, 0.45], ['rock_largeA', 150, 1.45, 0.8, 2.4, 0.8], ['rock_smallC', 262, 1.5, 0.85, 1.7, 0.45]].forEach(([n, deg, r, s, ry, cr]) => { const [x, z] = POL(r * k, deg); place(n, x, z, s * S, ry, { r: cr }); });
 
